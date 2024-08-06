@@ -58,7 +58,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                         width: 160,
                         color: Theme.of(context).colorScheme.inversePrimary,
                         child: recipeData!.imageName != null
-                        ? Image.file(recipeImg)
+                        ? Image.file(recipeImg, key: UniqueKey())
                         : Image.network('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg')
                       ),
                       Container(

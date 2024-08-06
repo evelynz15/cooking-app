@@ -7,18 +7,29 @@ class recipeStep {
   final String description;
 
   recipeStep ({
-    required this.recipeId,
-    required this.sequence,
-    required this.description,
+    this.id,
+    this.recipeId = 0,
+    this.sequence = 0,
+    this.description = '',
   });
 
   factory recipeStep.fromMap(Map<String, dynamic> dataMap) {
     
     return recipeStep(
+      id: dataMap['id'],
       recipeId: dataMap['recipe_id'],
       sequence: dataMap['sequence'],
       description: dataMap['description'],
     );
+  }
+
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'recipe_id': recipeId,
+      'sequence': sequence,
+      'description': description,
+    };
   }
 
   Future<int> insertStep() async {
@@ -38,5 +49,10 @@ class recipeStep {
   Future<int> deleteStepsById (id) async {
     DbHelper db = DbHelper();
     return await db.deleteSteps(id);
+  }
+
+  Future<void> updateSteps (recipeStep step) async {
+    DbHelper db = DbHelper();
+    await db.updateSteps(step);
   }
 }

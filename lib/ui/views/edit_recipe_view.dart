@@ -13,7 +13,6 @@ import 'package:cookingapp/models/step.dart';
 import 'dart:developer';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'dart:io';
 
 enum ImageSourceType { gallery, camera }
 
@@ -39,15 +38,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
   TextEditingController? _timeController2;
 
-  final List _ingredients = [1];
-  final List _steps = [1];
-
-  var _image;
+  File? _image;
   var imagePicker;
   var type;
-
-  int i = 1;
-  int q = 1;
+  String? _imageName;
 
   List<TextEditingController> listOfNameControllerIngredients = [];
   List<TextEditingController> listOfNameControllerSteps = [];
@@ -60,6 +54,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
   String? selectedTime;
 
   List<Ingredient>? selectedIngredientList;
+  List<recipeStep>? selectedStepList;
 
   late Future<Recipe>? recipeData;
 
@@ -71,8 +66,6 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
   void addNewIngredient() {
     setState(() {
-      i++;
-      _ingredients.add(i);
       listOfNameControllerIngredients.add(TextEditingController());
       listOfNameControllerUnits.add(TextEditingController());
       selectedIngredientList!.add(Ingredient());
@@ -81,9 +74,8 @@ class _EditRecipePageState extends State<EditRecipePage> {
 
   void addNewStep() {
     setState(() {
-      q++;
-      _steps.add(q);
       listOfNameControllerSteps.add(TextEditingController());
+      selectedStepList!.add(recipeStep());
     });
   }
 
@@ -124,6 +116,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
               }
               selectedTime = recipeSnap.data!.timeUnit;
               selectedIngredientList = recipeSnap.data!.ingredientList;
+              selectedStepList = recipeSnap.data!.stepList;
               File recipeImg = File(path.join(documentDirectory!.path, 'image',
                       recipeSnap.data!.id.toString()) +
                   recipeSnap.data!.imageName.toString());
@@ -148,7 +141,8 @@ class _EditRecipePageState extends State<EditRecipePage> {
                                 width: 160,
                                 child: _image != null
                                     ? Image.file(
-                                        _image,
+                                        _image!,
+                                        key: UniqueKey(),
                                         width: 200.0,
                                         height: 200.0,
                                         fit: BoxFit.fitHeight,
@@ -180,6 +174,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
                                             CameraDevice.front);
                                     setState(() {
                                       selectedImageSource = item;
+                                      _imageName = path.basename(image.path);
                                       _image = File(image.path);
                                     });
                                   },
@@ -262,7 +257,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
                         height: 100,
                         child: ListView.builder(
                           padding: EdgeInsets.all(16.0),
-                          itemCount: _ingredients.length,
+                          itemCount: listOfNameControllerIngredients.length,
                           itemBuilder: (BuildContext context, int index) {
                             return Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -332,7 +327,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
                         height: 100,
                         child: ListView.builder(
                           padding: EdgeInsets.all(16.0),
-                          itemCount: _steps.length,
+                          itemCount: listOfNameControllerSteps.length,
                           itemBuilder: (BuildContext context, int index) {
                             return _buildFormField("${index + 1}",
                                 listOfNameControllerSteps[index]);
@@ -345,50 +340,92 @@ class _EditRecipePageState extends State<EditRecipePage> {
                         width: 100,
                         child: FloatingActionButton(
                           onPressed: () async {
-                            Recipe recipe = Recipe(
-                              name: _recipeController!.text,
-                              yieldValue: _yieldController1!.text,
-                              time: int.parse(_timeController2!.text),
-                              timeUnit: selectedTime!,
-                            );
 
-                            int recipeId = await recipe.insertRecipe();
-                            log("test recipe id: $recipeId");
-
-                            List<int> ingredientIds = [];
+                            List<Ingredient> ingredientItems= [];
                             for (int i = 0;
                                 i < listOfNameControllerIngredients.length;
                                 i++) {
                               Ingredient ingredient = Ingredient(
-                                  recipeId: recipeId,
+                                id: selectedIngredientList![i].id != null
+                                ? recipeSnap.data!.ingredientList![i].id
+                                : null,                               
+                                  recipeId: widget.recipeId,
                                   ingredientName:
                                       listOfNameControllerIngredients[i].text,
                                   amount: double.parse(
                                       listOfNameControllerUnits[i].text),
-                                  unit: selectedUnit[i]!,
+                                  unit: selectedIngredientList![i].unit,
                                   sequence: i + 1);
-                              ingredientIds
-                                  .add(await ingredient.insertIngredient());
+                              ingredientItems.add(ingredient);
                             }
 
-                            List<int> stepIds = [];
+                            List<recipeStep> stepItems = [];
                             for (int i = 0;
                                 i < listOfNameControllerSteps.length;
                                 i++) {
                               recipeStep step = recipeStep(
-                                recipeId: recipeId,
+                                id: selectedStepList![i].id != null
+                                ? recipeSnap.data!.stepList![i].id
+                                : null,
+                                recipeId: widget.recipeId,
                                 sequence: i + 1,
                                 description: listOfNameControllerSteps[i].text,
                               );
-                              stepIds.add(await step.insertStep());
+                              stepItems.add(step);
                             }
+
+                            Recipe recipe = Recipe(
+                              id: widget.recipeId,
+                              name: _recipeController!.text,
+                              yieldValue: _yieldController1!.text,
+                              time: int.parse(_timeController2!.text),
+                              timeUnit: selectedTime!,
+                              imageName: _imageName != null
+                                  ? path.extension(_imageName!)
+                                  : null,
+                              ingredientList: ingredientItems,
+                              stepList: stepItems,
+                            );
+                            await recipe.updateRecipeInfo(recipe);
+
+                            int recipeId = widget.recipeId;
+                            log("recipe $recipeId updated");
+
+                            if (_imageName != null) {
+                              Directory documentDirectory =
+                                  await getApplicationDocumentsDirectory();
+                              String imgPath =
+                                  path.join(documentDirectory.path, 'image');
+                              if (!await Directory(imgPath).exists()) {
+                                Directory imgDir = Directory(imgPath);
+                                await imgDir.create(recursive: true);
+                              }
+
+                              String newImgName = recipeId.toString() +
+                                  path.extension(_imageName!);
+
+                              imgPath = path.join(imgPath, newImgName);
+                              File imgFile = File(imgPath);
+                              try {
+                                if (await imgFile.exists()) {
+                                  // If the file exists, delete it before writing the new data
+                                  await imgFile.delete();
+                                  Image img = Image.file(imgFile);
+                                  await img.image.evict(); 
+                                }
+                                await _image!.copy(imgPath);
+                                //await imgFile.writeAsBytes(bytes, flush: true);
+                                log('Image saved to: $imgPath');
+                              } catch (e) {
+                                log('Error saving image: $e');
+                              }
+                            } else {}
 
                             setState(() {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => FinishedRecipe(
-                                            recipeId: recipeId,
+                                      builder: (context) => CatagoryPage(
                                           )));
                             });
                           },

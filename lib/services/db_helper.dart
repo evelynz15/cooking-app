@@ -5,6 +5,9 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'dart:developer';
 import 'dart:async';
+import 'package:cookingapp/models/recipe.dart';
+import 'package:cookingapp/models/ingredient.dart';
+import 'package:cookingapp/models/step.dart';
 
 class DbHelper {
   static const _databaseName = "cookingapp.db";
@@ -70,7 +73,8 @@ class DbHelper {
   Future<void> _onUpgradeDb(
       Database db, int oldVersion, int newVersion) async {}
 
-  Future<int> insertRecipe(String name, String yieldValue, int time, String timeUnit, String? imageName) async {
+  Future<int> insertRecipe(String name, String yieldValue, int time,
+      String timeUnit, String? imageName) async {
     Map<String, Object?> recipeMap = {
       'name': name,
       'yield': yieldValue,
@@ -148,7 +152,7 @@ class DbHelper {
     }
   }
 
-  Future<List<Map<String, Object?>>> getIngredientsById(int id) async {
+  Future<List<Map<String, Object?>>> getIngredientsByRecipeId(int id) async {
     String query = "SELECT * FROM recipe_ingredient WHERE recipe_id = ?";
 
     try {
@@ -226,10 +230,8 @@ class DbHelper {
   Future<int> deleteRecipeInfo(int id) async {
     try {
       await _database!.transaction((action) async {
-        await action.delete(
-          'recipe_ingredient', 
-          where: 'recipe_id = ?', 
-          whereArgs: [id]);
+        await action.delete('recipe_ingredient',
+            where: 'recipe_id = ?', whereArgs: [id]);
         await action.delete(
           'recipe_step',
           where: 'recipe_id = ?',
@@ -245,6 +247,86 @@ class DbHelper {
     } catch (e) {
       log('deleteRecipeInfo - Error: $e');
       return 0;
+    }
+  }
+
+  Future<void> updateRecipe(Recipe recipe) async {
+    try {
+      await _database!.update(
+        'recipe',
+        recipe.toMap(),
+        where: 'id = ?',
+        whereArgs: [recipe.id],
+      );
+    } catch (e) {
+      log('updateRecipe - Error: $e');
+    }
+  }
+
+  Future<void> updateIngredients(Ingredient ingredient) async {
+    try {
+      await _database!.update(
+        'recipe_ingredient',
+        ingredient.toMap(),
+        where: 'id = ?',
+        whereArgs: [ingredient.id],
+      );
+    } catch (e) {
+      log('updateIngredients - Error: $e');
+    }
+  }
+
+  Future<void> updateSteps(recipeStep step) async {
+    try {
+      await _database!.update(
+        'recipe_step',
+        step.toMap(),
+        where: 'id = ?',
+        whereArgs: [step.id],
+      );
+    } catch (e) {
+      log('updateSteps - Error: $e');
+    }
+  }
+
+  Future<void> updateRecipeInfo(Recipe recipe) async {
+    try {
+      await _database!.transaction((action) async {
+        await action.update(
+          'recipe',
+          recipe.toMap(),
+          where: 'id = ?',
+          whereArgs: [recipe.id],
+        );
+        for (Ingredient ingredient in recipe.ingredientList!) {
+          ingredient.id != null 
+          ? await action.update(
+            'recipe_ingredient',
+            ingredient.toMap(),
+            where: 'id = ?',
+            whereArgs: [ingredient.id],
+          )
+          : await action.insert(
+            'recipe_ingredient', 
+            ingredient.toMap(),
+          );
+        }
+        for (recipeStep step in recipe.stepList!) {
+          step.id != null
+          ? await action.update(
+            'recipe_step',
+            step.toMap(),
+            where: 'id = ?',
+            whereArgs: [step.id],
+          )
+          : await action.insert(
+            'recipe_step', 
+            step.toMap(),
+          );
+        }
+      });
+    } catch (e) {
+      log('updateRecipeInfo - Error: $e');
     }
   }
 }

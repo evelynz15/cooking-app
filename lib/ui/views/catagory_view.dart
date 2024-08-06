@@ -59,6 +59,9 @@ class _CatagoryPageState extends State<CatagoryPage> {
               Recipe recipe = recipeSnap.data![index];
               File recipeImg = File(path.join(documentDirectory!.path, 'image', recipe.id.toString()) +
                   recipe.imageName.toString());
+                  log('image location - ' + recipeImg.path);
+                
+                  
               return Container(
                 margin: EdgeInsets.symmetric(horizontal: 50),
                 height: 190,
@@ -93,6 +96,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                                         ? Image.file(
                                             recipeImg,
                                             height: 90,
+                                            key: UniqueKey(),
                                           )
                                         : SizedBox(
                                             child: Image.network(

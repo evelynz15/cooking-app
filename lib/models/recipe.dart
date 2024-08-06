@@ -34,6 +34,17 @@ class Recipe {
     );
   }
 
+  Map<String, Object?> toMap() {
+    return {
+      'id': id,
+      'name': name,
+      'yield': yieldValue,
+      'time': time,
+      'time_unit': timeUnit,
+      'image': imageName
+    };
+  }
+
   Future<int> insertRecipe() async {
     DbHelper db = DbHelper();
     return await db.insertRecipe(name, yieldValue, time, timeUnit, imageName);
@@ -42,7 +53,7 @@ class Recipe {
   static Future<Recipe> getRecipeById(id) async {
     DbHelper db = DbHelper();
     Recipe recipeInfo = Recipe.fromMap(await db.getRecipeById(id));
-    recipeInfo.ingredientList = await Ingredient.getIngredientsById(id);
+    recipeInfo.ingredientList = await Ingredient.getIngredientsByRecipeId(id);
     recipeInfo.stepList = await recipeStep.getStepsById(id);
 
     return recipeInfo;
@@ -56,5 +67,15 @@ class Recipe {
   Future<int> deleteRecipeInfo (id) async {
     DbHelper db = DbHelper();
     return await db.deleteRecipeInfo(id);
+  }
+
+  Future<void> updateRecipe (Recipe recipe) async {
+    DbHelper db = DbHelper();
+    await db.updateRecipe(recipe);
+  }
+
+  Future<void> updateRecipeInfo (Recipe recipe) async {
+    DbHelper db = DbHelper();
+    await db.updateRecipeInfo(recipe);
   }
 }
