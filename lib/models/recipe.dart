@@ -8,6 +8,7 @@ class Recipe {
   final String yieldValue;
   final int time;
   final String timeUnit;
+  final int catagoryId;
   String? imageName;
   List<Ingredient>? ingredientList = [];
   List<recipeStep>? stepList = [];  
@@ -18,6 +19,7 @@ class Recipe {
     required this.yieldValue,
     required this.time,
     required this.timeUnit,
+    required this.catagoryId,
     this.imageName,
     this.ingredientList,
     this.stepList,
@@ -31,6 +33,7 @@ class Recipe {
       time: dataMap['time'],
       timeUnit: dataMap['time_unit'],
       imageName: dataMap['image'],
+      catagoryId: dataMap['catagory_id'],
     );
   }
 
@@ -41,13 +44,14 @@ class Recipe {
       'yield': yieldValue,
       'time': time,
       'time_unit': timeUnit,
-      'image': imageName
+      'image': imageName,
+      'catagory_id': catagoryId,
     };
   }
 
   Future<int> insertRecipe() async {
     DbHelper db = DbHelper();
-    return await db.insertRecipe(name, yieldValue, time, timeUnit, imageName);
+    return await db.insertRecipe(name, yieldValue, time, timeUnit, imageName, catagoryId);
   }
 
   static Future<Recipe> getRecipeById(id) async {
@@ -57,6 +61,15 @@ class Recipe {
     recipeInfo.stepList = await recipeStep.getStepsById(id);
 
     return recipeInfo;
+  }
+
+  static Future<List<Recipe>> getRecipesByCatagoryId(id) async {
+    DbHelper db = DbHelper();
+    List<Recipe> recipesInCatagory = []; 
+    for(var recipeInfo in await db.getRecipesByCatagoryId(id)){
+    recipesInCatagory.add(Recipe.fromMap(recipeInfo));
+    }
+    return recipesInCatagory;
   }
 
   Future<int> deleteRecipeById (id) async {

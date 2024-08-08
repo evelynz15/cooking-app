@@ -8,9 +8,11 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
 import 'dart:developer';
+import 'package:cookingapp/ui/router.dart'; 
 
 class CatagoryPage extends StatefulWidget {
-  const CatagoryPage({super.key});
+  final int? catagoryId;
+  const CatagoryPage({super.key, required this.catagoryId});
 
   @override
   State<CatagoryPage> createState() => _CatagoryPageState();
@@ -23,8 +25,18 @@ class _CatagoryPageState extends State<CatagoryPage> {
   Future<List<Recipe>> getAllRecipes() async {
     documentDirectory = await getApplicationDocumentsDirectory();
 
+    String? catagoryName;
+    switch (widget.catagoryId) {
+      case 0: catagoryName = "APPETIZERS";
+      case 1: catagoryName = "ENTREES";
+      case 2: catagoryName = "DESSERTS";
+      case 3: catagoryName = "LUNCH";
+      case 4: catagoryName = "BREAKFAST";
+      case 5: catagoryName = "OTHER";
+    }
+
     DbHelper db = DbHelper();
-    List<Map<String, Object?>> listOfRecipes = await db.getAllRecipes();
+    List<Map<String, Object?>> listOfRecipes = await db.getRecipesByCatagoryId(widget.catagoryId!);
     return [
       for (final {
             'id': id as int,
@@ -32,7 +44,8 @@ class _CatagoryPageState extends State<CatagoryPage> {
             'yield': yieldValue as String,
             'time': time as int,
             'time_unit': timeUnit as String,
-            'image': imageName as String?
+            'image': imageName as String?,
+            'catagory_id': catagoryId as int,
           } in listOfRecipes)
         Recipe(
             id: id,
@@ -40,7 +53,8 @@ class _CatagoryPageState extends State<CatagoryPage> {
             yieldValue: yieldValue,
             time: time,
             timeUnit: timeUnit,
-            imageName: imageName),
+            imageName: imageName,
+            catagoryId: catagoryId),
     ];
   }
 
@@ -76,11 +90,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                         InkWell(
                           onTap: () {
                             setState(() {
-                              Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => FinishedRecipe(
-                                          recipeId: recipe.id!)));
+                              Navigator.pushNamed(context, 'finalRecipe', arguments: {'recipeId': recipe.id, 'catagoryId': widget.catagoryId});
                             });
                           },
                           child: Row(
@@ -128,17 +138,6 @@ class _CatagoryPageState extends State<CatagoryPage> {
                             )
                           ],
                         ))
-
-                        /*ListTile(
-                              title: Text(recipe.name),
-                              trailing: IconButton(
-                                onPressed: () {
-                                  log('test');
-                                },
-                                tooltip: "Delete recipe",
-                                icon: Icon(Icons.delete, size: 20),
-                                color: Colors.white,
-                              )),*/
                       ],
                     ),
                   ),
@@ -159,9 +158,9 @@ class _CatagoryPageState extends State<CatagoryPage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.deepPurple,
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
               child: Text("What's Cooking?"),
             ),
@@ -172,11 +171,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                 //_onItemTapped(0);
                 Navigator.pop(context);
                 setState(() {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MyHomePage(title: "What's Cooking?")));
+                  Navigator.pushNamed(context, 'home');
                 });
               },
             ),
@@ -187,8 +182,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                 //_onItemTapped(1);
                 Navigator.pop(context);
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => CatagoryPage()));
+                  //Navigator.pushNamed(context, 'catagory');
                 });
               },
             ),
@@ -198,7 +192,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
       body: SafeArea(
         child: Row(
           children: [
-            VerticalNavBar(),
+            VerticalNavBar(catagoryId: widget.catagoryId),
             Expanded(
               child: Center(
                 child: recipeListWidget(),
@@ -211,9 +205,27 @@ class _CatagoryPageState extends State<CatagoryPage> {
   }
 }
 
-class VerticalNavBar extends StatelessWidget {
+class VerticalNavBar extends StatefulWidget {
+  final int? catagoryId;
+  const VerticalNavBar({super.key, required this.catagoryId});
+
+  @override
+  State<VerticalNavBar> createState() => _VerticalNavBarState();
+}
+
+class _VerticalNavBarState extends State<VerticalNavBar> {
   @override
   Widget build(BuildContext context) {
+    String? catagoryName;
+    switch (widget.catagoryId) {
+      case 0: catagoryName = "APPETIZERS";
+      case 1: catagoryName = "ENTREES";
+      case 2: catagoryName = "DESSERTS";
+      case 3: catagoryName = "LUNCH";
+      case 4: catagoryName = "BREAKFAST";
+      case 5: catagoryName = "OTHER";
+    }
+
     return Container(
       color: Theme.of(context).colorScheme.inversePrimary,
       height: double.infinity,
@@ -233,7 +245,7 @@ class VerticalNavBar extends StatelessWidget {
           RotatedBox(
             quarterTurns: 3,
             child: Text(
-              'DESSERTS',
+              catagoryName!,
               textAlign: TextAlign.center,
               style: TextStyle(
                 fontSize: 50, // Adjust size as needed
@@ -250,10 +262,7 @@ class VerticalNavBar extends StatelessWidget {
                 padding: EdgeInsets.only(bottom: 50),
                 child: RawMaterialButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => NewRecipePage()));
+                    Navigator.pushNamed(context, 'addRecipe', arguments: {"catagoryId": widget.catagoryId});
                   },
                   elevation: 0,
                   fillColor: Colors.white,

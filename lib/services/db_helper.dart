@@ -43,6 +43,7 @@ class DbHelper {
   "time" INTEGER,
   "time_unit"	TEXT,
   "image"	TEXT,
+  "catagory_id"	INTEGER NOT NULL,
   PRIMARY KEY("id" AUTOINCREMENT) 
   )
   ''');
@@ -74,13 +75,14 @@ class DbHelper {
       Database db, int oldVersion, int newVersion) async {}
 
   Future<int> insertRecipe(String name, String yieldValue, int time,
-      String timeUnit, String? imageName) async {
+      String timeUnit, String? imageName, int catagoryId) async {
     Map<String, Object?> recipeMap = {
       'name': name,
       'yield': yieldValue,
       'time': time,
       'time_unit': timeUnit,
-      'image': imageName
+      'image': imageName,
+      'catagory_id': catagoryId,
     };
 
     try {
@@ -149,6 +151,23 @@ class DbHelper {
     } catch (e) {
       log('getRecipeById - Error: $e');
       return {};
+    }
+  }
+
+  Future<List<Map<String, Object?>>> getRecipesByCatagoryId (int id) async {
+    String query = "SELECT * FROM recipe WHERE catagory_id = ?";
+    try {
+      List<Map<String, Object?>> result =
+          await _database!.rawQuery(query, [id]);
+      var res = result.toList();
+      if (res.isNotEmpty) {
+        return res;
+      } else {
+        throw Exception("No data");
+      }
+    } catch (e) {
+      log('getRecipesByCatagoryId - Error: $e');
+      return [];
     }
   }
 
@@ -299,30 +318,30 @@ class DbHelper {
           whereArgs: [recipe.id],
         );
         for (Ingredient ingredient in recipe.ingredientList!) {
-          ingredient.id != null 
-          ? await action.update(
-            'recipe_ingredient',
-            ingredient.toMap(),
-            where: 'id = ?',
-            whereArgs: [ingredient.id],
-          )
-          : await action.insert(
-            'recipe_ingredient', 
-            ingredient.toMap(),
-          );
+          ingredient.id != null
+              ? await action.update(
+                  'recipe_ingredient',
+                  ingredient.toMap(),
+                  where: 'id = ?',
+                  whereArgs: [ingredient.id],
+                )
+              : await action.insert(
+                  'recipe_ingredient',
+                  ingredient.toMap(),
+                );
         }
         for (recipeStep step in recipe.stepList!) {
           step.id != null
-          ? await action.update(
-            'recipe_step',
-            step.toMap(),
-            where: 'id = ?',
-            whereArgs: [step.id],
-          )
-          : await action.insert(
-            'recipe_step', 
-            step.toMap(),
-          );
+              ? await action.update(
+                  'recipe_step',
+                  step.toMap(),
+                  where: 'id = ?',
+                  whereArgs: [step.id],
+                )
+              : await action.insert(
+                  'recipe_step',
+                  step.toMap(),
+                );
         }
       });
     } catch (e) {

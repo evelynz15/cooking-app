@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:cookingapp/ui/views/catagory_view.dart';
+import 'package:cookingapp/ui/router.dart'; 
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -12,6 +13,25 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
+  Map<int, String> catagoryNames = {
+    0: "APPETIZERS",
+    1: "ENTREES",
+    2: "DESSERT",
+    3: "LUNCH",
+    4: "BREAKFAST",
+    5: "OTHERS"
+};
+  List<String> backgroundImages = [
+    "https://www.southernliving.com/thmb/-_Rri5vav4ttiNj2arDaRNzvG-g=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/27496_MkitEasy_DIGI_44_preview_scale_100_ppi_150_quality_100-cc4c5cc90b124650806f5baa603a4d42.jpg",
+    "https://www.foodandwine.com/thmb/w2stkbDF7NsURo5muKWZQI8LGNM=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/hanger-steak-with-kimchi-glaze-and-miso-butter-grilled-vegetables-FT-RECIPE0720-6bc40e4bb70a47778bcc618c5ffb9a16.jpg",
+    "https://www.foodandwine.com/thmb/ckc6L6xKox0WfpfO6dMkuVGPQOY=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Angel-Food-Cake-with-Three-Berry-Compote-FT-RECIPE0323-541a780b871441e0ab14383ee38acc44.jpg",
+    "https://images.immediate.co.uk/production/volatile/sites/30/2023/03/Sumac-turkey-stuffed-pittas-73482d5.jpg?resize=900%2C471",
+    "https://static1.therecipeimages.com/wordpress/wp-content/uploads/2022/05/Rachel-Park-on-Unsplash-breakfast-food-on-table.png?q=50&fit=crop&w=480&h=300&dpr=1.5",
+    "https://www.eatright.org/-/media/images/eatright-landing-pages/foodgroupslp_804x482.jpg?as=0&w=967&rev=d0d1ce321d944bbe82024fff81c938e7&hash=E6474C8EFC5BE5F0DA9C32D4A797D10D"
+  ];
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,9 +43,9 @@ class _MyHomePageState extends State<MyHomePage> {
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
-            const DrawerHeader(
+            DrawerHeader(
               decoration: BoxDecoration(
-                color: Colors.deepPurple,
+                color: Theme.of(context).colorScheme.inversePrimary,
               ),
               child: Text("What's Cooking?"),
             ),
@@ -35,11 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.pop(context);
                 setState(() {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) =>
-                              MyHomePage(title: "What's Cooking?")));
+                  Navigator.pushNamed(context, 'home');
                 });
               },
             ),
@@ -49,8 +65,7 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: () {
                 Navigator.pop(context);
                 setState(() {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => CatagoryPage()));
+                  Navigator.pushNamed(context, 'catagory');
                 });
               },
             ),
@@ -92,106 +107,62 @@ class _MyHomePageState extends State<MyHomePage> {
                 });
               }),
               SizedBox(height: 50),
-              InkWell(
-                splashColor: Colors.blue.withAlpha(30),
-                onTap: () {
-                  setState(() {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CatagoryPage()));
-                  });
-                },
-                child: Container(
-                  width: 400,
-                  height: 150,
-                  child: Card(
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Opacity(
-                            opacity: 0.5,
-                            child: Image.network(
-                              'https://www.foodandwine.com/thmb/ckc6L6xKox0WfpfO6dMkuVGPQOY=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/Angel-Food-Cake-with-Three-Berry-Compote-FT-RECIPE0323-541a780b871441e0ab14383ee38acc44.jpg',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Center(
-                              child: Text(
-                                'DESSERT',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 40, // Adjust size as needed
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            )),
-                      ],
-                    ),
+              Expanded(
+                child: ListView.separated(
+                  padding: const EdgeInsets.all(8),
+                  itemCount: catagoryNames.length,
+                  itemBuilder: (BuildContext context, int index) {
+                    return _buildCatagoryCard(catagoryNames[index]!, index,
+                        backgroundImages[index]);
+                  },
+                  separatorBuilder: (BuildContext context, int index) =>
+                      const Divider(),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildCatagoryCard(
+      String catagoryName, int catagoryId, String backgroundImage) {
+    return InkWell(
+      splashColor: Colors.blue.withAlpha(30),
+      onTap: () {
+        setState(() {
+          Navigator.pushNamed(context, "catagory", arguments: {"catagoryId": catagoryId});
+        });
+      },
+      child: Container(
+        width: 400,
+        height: 150,
+        child: Card(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Opacity(
+                  opacity: 0.5,
+                  child: Image.network(
+                    backgroundImage,
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
-              InkWell(
-                splashColor: Colors.blue.withAlpha(30),
-                onTap: () {
-                  setState(() {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => CatagoryPage()));
-                  });
-                },
-                child: Container(
-                  width: 400,
-                  height: 150,
-                  child: Card(
-                    child: Stack(
-                      children: [
-                        Positioned.fill(
-                          child: Opacity(
-                            opacity: 0.5,
-                            child: Image.network(
-                              'https://www.southernliving.com/thmb/-_Rri5vav4ttiNj2arDaRNzvG-g=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/27496_MkitEasy_DIGI_44_preview_scale_100_ppi_150_quality_100-cc4c5cc90b124650806f5baa603a4d42.jpg',
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ),
-                        Padding(
-                            padding: EdgeInsets.all(20.0),
-                            child: Center(
-                              child: Text(
-                                'APPETIZERS',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  fontSize: 40, // Adjust size as needed
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                            )),
-                      ],
+              Padding(
+                  padding: EdgeInsets.all(20.0),
+                  child: Center(
+                    child: Text(
+                      catagoryName,
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontSize: 40, // Adjust size as needed
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                ),
-              ),
-              /*InkWell(
-                splashColor: Colors.blue.withAlpha(30),
-                onTap: () {},
-                child: Container(
-                  width: 400,
-                  height: 150,
-                  child: Card(
-                    child: Padding(
-                        padding: EdgeInsets.all(20.0),
-                        child: Text('Breakfast')),
-                  ),
-                ),
-              ),*/
-              
+                  )),
             ],
           ),
         ),

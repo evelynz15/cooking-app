@@ -9,12 +9,14 @@ import 'dart:developer';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
+import 'package:cookingapp/ui/router.dart'; 
 
 
 class FinishedRecipe extends StatefulWidget {
   final int recipeId;
+  final int catagoryId;
 
-  const FinishedRecipe({super.key, required this.recipeId});
+  const FinishedRecipe({super.key, required this.recipeId, required this.catagoryId});
 
   @override
   State<FinishedRecipe> createState() => _FinishedRecipeState();
@@ -23,6 +25,7 @@ class FinishedRecipe extends StatefulWidget {
 class _FinishedRecipeState extends State<FinishedRecipe> {
   Directory? documentDirectory;
   Recipe? recipeData;
+
   Future<Recipe> getRecipe() async {
     documentDirectory = await getApplicationDocumentsDirectory();
     recipeData = await Recipe.getRecipeById(widget.recipeId);
@@ -41,6 +44,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
         } else {
           File recipeImg = File(path.join(documentDirectory!.path, 'image', recipeData!.id.toString()) +
                   recipeData!.imageName.toString());
+                
           return Padding(
               padding: const EdgeInsets.only(left: 15, right: 15, top: 30),
               child: Center(
@@ -137,10 +141,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                     child: FloatingActionButton(
                       onPressed: () {
                         setState(() {
-                        Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => EditRecipePage(recipeId: widget.recipeId)));
+                        Navigator.pushNamed(context, 'editRecipe', arguments: {"recipeId": widget.recipeId, 'catagoryId': widget.catagoryId});
                       });
                       },
                       child: Text("Edit"),
@@ -156,10 +157,20 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
 
   @override
   Widget build(BuildContext context) {
+    String? catagoryName;
+    switch (widget.catagoryId) {
+      case 0: catagoryName = "APPETIZERS";
+      case 1: catagoryName = "ENTREES";
+      case 2: catagoryName = "DESSERTS";
+      case 3: catagoryName = "LUNCH";
+      case 4: catagoryName = "BREAKFAST";
+      case 5: catagoryName = "OTHER";
+    }
+
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("DESSERT"),
+        title: Text(catagoryName!),
       ),
       body: recipeWidget(),
     );
