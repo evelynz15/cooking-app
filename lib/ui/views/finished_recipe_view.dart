@@ -9,14 +9,15 @@ import 'dart:developer';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
-import 'package:cookingapp/ui/router.dart'; 
-
+import 'package:cookingapp/ui/router.dart';
+import 'package:cookingapp/ui/views/recipe_stepper_edit_view.dart';
 
 class FinishedRecipe extends StatefulWidget {
   final int recipeId;
   final int catagoryId;
 
-  const FinishedRecipe({super.key, required this.recipeId, required this.catagoryId});
+  const FinishedRecipe(
+      {super.key, required this.recipeId, required this.catagoryId});
 
   @override
   State<FinishedRecipe> createState() => _FinishedRecipeState();
@@ -42,43 +43,99 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
           //print('project snapshot data is: ${projectSnap.data}');
           return const Center(child: CircularProgressIndicator());
         } else {
-          File recipeImg = File(path.join(documentDirectory!.path, 'image', recipeData!.id.toString()) +
-                  recipeData!.imageName.toString());
-                
+          File recipeImg = File(path.join(
+                  documentDirectory!.path, 'image', recipeData!.id.toString()) +
+              recipeData!.imageName.toString());
+
           return Padding(
               padding: const EdgeInsets.only(left: 15, right: 15, top: 30),
               child: Center(
                   child: Column(
                 children: [
-                  Text(
-                    recipeData!.name.capitalize(),
-                    style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                  Text(recipeData!.name.capitalize(),
+                      style:
+                          TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
                   SizedBox(height: 20),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Container(
-                        height: 160,
-                        width: 160,
-                        color: Theme.of(context).colorScheme.inversePrimary,
-                        child: recipeData!.imageName != null
-                        ? Image.file(recipeImg, key: UniqueKey())
-                        : Image.network('https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg')
-                      ),
+                          height: 160,
+                          width: 160,
+                          color: Theme.of(context).colorScheme.inversePrimary,
+                          child: recipeData!.imageName != null
+                              ? Image.file(recipeImg, key: UniqueKey())
+                              : Image.network(
+                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg')),
                       Container(
                         width: 150,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                           children: [
-                            Text("Yield: ${recipeData!.yieldValue}", style:TextStyle(fontSize: 18) ),
+                            Text("Yield: ${recipeData!.yieldValue}",
+                                style: TextStyle(fontSize: 18)),
                             Row(
                               children: [
                                 SizedBox(
-                                  width: 80,
-                                  child: Text("Time: ${recipeData!.time.toString()}", style:TextStyle(fontSize: 18))
-                                  ),
-                                Text(recipeData!.timeUnit, style:TextStyle(fontSize: 18)),
+                                    width: 80,
+                                    child: Text(
+                                        "Time: ${recipeData!.time.toString()}",
+                                        style: TextStyle(fontSize: 18))),
+                                Text(recipeData!.timeUnit,
+                                    style: TextStyle(fontSize: 18)),
                               ],
+                            ),
+                            SizedBox(height: 30),
+                            SizedBox(
+                              width: 120,
+                              height: 40,
+                              child: OutlinedButton(
+                                onPressed: () async {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          scrollable: true,
+                                          title: Text('Notes'),
+                                          content: Container(
+                                            decoration: BoxDecoration(
+                                                          border: Border.all()),
+                                            child: Padding(
+                                              padding: const EdgeInsets.all(12.0),
+                                              child: Form(
+                                                child: Column(
+                                                  children: <Widget>[
+                                                    Align(
+                                                      alignment:Alignment.topLeft,
+                                                      child: Container(
+                                                          height: 100,
+                                                          child: Text(
+                                                              recipeData!.notes !=
+                                                                      null
+                                                                  ? recipeData!
+                                                                      .notes!
+                                                                      .capitalize()
+                                                                  : "No notes",
+                                                              style: TextStyle(
+                                                                  fontSize: 18))),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          ),
+                                          actions: [
+                                            ElevatedButton(
+                                                child: Text("Done"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                })
+                                          ],
+                                        );
+                                      });
+                                },
+                                child: Text("Notes"),
+                              ),
                             ),
                           ],
                         ),
@@ -88,7 +145,8 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                   SizedBox(height: 50),
                   Container(
                       alignment: Alignment.centerLeft,
-                      child: Text("Ingredients List:", style:TextStyle(fontSize: 18))),
+                      child: Text("Ingredients List:",
+                          style: TextStyle(fontSize: 18))),
                   SizedBox(
                     height: 100,
                     child: ListView.builder(
@@ -100,15 +158,26 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                           children: [
                             SizedBox(
                               width: 200,
-                              child: Text(recipeData!.ingredientList![index].ingredientName.capitalize(), style:TextStyle(fontSize: 17)),
+                              child: Text(
+                                  recipeData!
+                                      .ingredientList![index].ingredientName
+                                      .capitalize(),
+                                  style: TextStyle(fontSize: 17)),
                             ),
                             Row(
                               children: [
                                 SizedBox(
                                   width: 50,
-                                  child: Text(recipeData!.ingredientList![index].amount.toString(), style:TextStyle(fontSize: 17)),
+                                  child: Text(
+                                      recipeData!.ingredientList![index].amount
+                                          .toString(),
+                                      style: TextStyle(fontSize: 17)),
                                 ),
-                                SizedBox(width: 70, child: Text(recipeData!.ingredientList![index].unit, style:TextStyle(fontSize: 17))),
+                                SizedBox(
+                                    width: 70,
+                                    child: Text(
+                                        recipeData!.ingredientList![index].unit,
+                                        style: TextStyle(fontSize: 17))),
                               ],
                             ),
                           ],
@@ -119,7 +188,8 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                   SizedBox(height: 50),
                   Container(
                       alignment: Alignment.centerLeft,
-                      child: Text("Procedure:", style:TextStyle(fontSize: 18))),
+                      child:
+                          Text("Procedure:", style: TextStyle(fontSize: 18))),
                   SizedBox(
                     //width: 200,
                     height: 200,
@@ -128,9 +198,14 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                       itemCount: recipeData!.stepList!.length,
                       itemBuilder: (BuildContext context, int index) {
                         return ListTile(
-                          leading: Text(recipeData!.stepList![index].sequence.toString(), style:TextStyle(fontSize: 17)),
-                          title: Text(recipeData!.stepList![index].description.capitalize(), style:TextStyle(fontSize: 17))
-                          );
+                            leading: Text(
+                                recipeData!.stepList![index].sequence
+                                    .toString(),
+                                style: TextStyle(fontSize: 17)),
+                            title: Text(
+                                recipeData!.stepList![index].description
+                                    .capitalize(),
+                                style: TextStyle(fontSize: 17)));
                       },
                     ),
                   ),
@@ -141,8 +216,16 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                     child: FloatingActionButton(
                       onPressed: () {
                         setState(() {
-                        Navigator.pushNamed(context, 'editRecipe', arguments: {"recipeId": widget.recipeId, 'catagoryId': widget.catagoryId});
-                      });
+                          /*Navigator.pushNamed(context, 'editRecipe',
+                              arguments: {
+                                "recipeId": widget.recipeId,
+                                'catagoryId': widget.catagoryId
+                              });*/
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) => EditFormPage(
+                                  recipeId: widget.recipeId,
+                                  catagoryId: widget.catagoryId)));
+                        });
                       },
                       child: Text("Edit"),
                     ),
@@ -159,19 +242,33 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
   Widget build(BuildContext context) {
     String? catagoryName;
     switch (widget.catagoryId) {
-      case 0: catagoryName = "APPETIZERS";
-      case 1: catagoryName = "ENTREES";
-      case 2: catagoryName = "DESSERTS";
-      case 3: catagoryName = "LUNCH";
-      case 4: catagoryName = "BREAKFAST";
-      case 5: catagoryName = "OTHER";
+      case 0:
+        catagoryName = "APPETIZERS";
+      case 1:
+        catagoryName = "ENTREES";
+      case 2:
+        catagoryName = "DESSERTS";
+      case 3:
+        catagoryName = "LUNCH";
+      case 4:
+        catagoryName = "BREAKFAST";
+      case 5:
+        catagoryName = "OTHER";
     }
 
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text(catagoryName!),
-      ),
+          backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+          title: Text(catagoryName!),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () {
+              setState(() {
+                Navigator.pushNamed(context, 'catagory',
+                    arguments: {"catagoryId": widget.catagoryId});
+              });
+            },
+          )),
       body: recipeWidget(),
     );
   }

@@ -9,6 +9,7 @@ import 'package:path/path.dart' as path;
 import 'dart:io';
 import 'dart:developer';
 import 'package:cookingapp/ui/router.dart'; 
+import 'package:cookingapp/ui/views/recipe_stepper/recipe_stepper_view.dart';
 
 class CatagoryPage extends StatefulWidget {
   final int? catagoryId;
@@ -46,6 +47,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
             'time_unit': timeUnit as String,
             'image': imageName as String?,
             'catagory_id': catagoryId as int,
+            'notes': notes as String?
           } in listOfRecipes)
         Recipe(
             id: id,
@@ -54,7 +56,9 @@ class _CatagoryPageState extends State<CatagoryPage> {
             time: time,
             timeUnit: timeUnit,
             imageName: imageName,
-            catagoryId: catagoryId),
+            catagoryId: catagoryId,
+            notes: notes,
+            ),
     ];
   }
 
@@ -154,41 +158,6 @@ class _CatagoryPageState extends State<CatagoryPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-              child: Text("What's Cooking?"),
-            ),
-            ListTile(
-              title: const Text('Home'),
-              selected: _selectedIndex == 0,
-              onTap: () {
-                //_onItemTapped(0);
-                Navigator.pop(context);
-                setState(() {
-                  Navigator.pushNamed(context, 'home');
-                });
-              },
-            ),
-            ListTile(
-              title: const Text('Desserts'),
-              selected: _selectedIndex == 1,
-              onTap: () {
-                //_onItemTapped(1);
-                Navigator.pop(context);
-                setState(() {
-                  //Navigator.pushNamed(context, 'catagory');
-                });
-              },
-            ),
-          ],
-        ),
-      ),
       body: SafeArea(
         child: Row(
           children: [
@@ -235,13 +204,18 @@ class _VerticalNavBarState extends State<VerticalNavBar> {
           Builder(
             builder: (context) {
               return IconButton(
-                icon: const Icon(Icons.menu),
+                icon: const Icon(
+                  Icons.home,
+                  size: 50,
+                  color: Colors.white,
+                  ),
                 onPressed: () {
-                  Scaffold.of(context).openDrawer();
+                  Navigator.pushNamed(context, 'home');
                 },
               );
             },
           ),
+          SizedBox(height: 10),
           RotatedBox(
             quarterTurns: 3,
             child: Text(

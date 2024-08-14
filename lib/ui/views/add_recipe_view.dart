@@ -33,6 +33,8 @@ class _NewRecipePageState extends State<NewRecipePage> {
 
   final TextEditingController _timeController2 = TextEditingController();
 
+  final TextEditingController _notesController = TextEditingController();
+
   final List _ingredients = [1];
   final List _steps = [1];
 
@@ -89,9 +91,9 @@ class _NewRecipePageState extends State<NewRecipePage> {
             padding: const EdgeInsets.only(left: 15, right: 15, top: 10),
             child: Center(
                 child: Form(
-                  key: _formKey,
-                  child: Column(
-                                children: [
+              key: _formKey,
+              child: Column(
+                children: [
                   _buildFormField("Title of Recipe", _recipeController),
                   SizedBox(height: 50),
                   Row(
@@ -110,8 +112,10 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                     fit: BoxFit.fitHeight,
                                   )
                                 : Container(
-                                    decoration:
-                                        BoxDecoration(color: Colors.red[200]),
+                                    decoration: BoxDecoration(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .inversePrimary),
                                     width: 200,
                                     height: 200,
                                     child: Icon(
@@ -179,8 +183,9 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                       selectedTime = newValue ?? '';
                                     });
                                   },
-                                  items: timeUnits.map<DropdownMenuItem<String>>(
-                                      (String value) {
+                                  items: timeUnits
+                                      .map<DropdownMenuItem<String>>(
+                                          (String value) {
                                     return DropdownMenuItem<String>(
                                       value: value,
                                       child: Text(value),
@@ -188,6 +193,119 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                   }).toList(),
                                 ),
                               ],
+                            ),
+                            SizedBox(height: 30),
+                            SizedBox(
+                              width: 120,
+                              height: 40,
+                              child: OutlinedButton(
+                                onPressed: () async {
+                                  showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          scrollable: true,
+                                          title: Text('Notes'),
+                                          content: Padding(
+                                            padding: const EdgeInsets.all(8.0),
+                                            child: Form(
+                                              child: Column(
+                                                children: <Widget>[
+                                                  SizedBox(
+                                                    height: 200,
+                                                    child: TextFormField(
+                                                      controller: _notesController,
+                                                      maxLines: null, // Set this
+                                                      expands: true, // and this
+                                                      keyboardType:
+                                                          TextInputType.multiline,
+                                                      decoration: InputDecoration(
+                                                        hintText:
+                                                            'Enter your notes',
+                                                        border:
+                                                            OutlineInputBorder(),
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ),
+                                          ),
+                                          actions: [
+                                            ElevatedButton(
+                                                child: Text("Done"),
+                                                onPressed: () {
+                                                  Navigator.of(context).pop();
+                                                })
+                                          ],
+                                        );
+                                      });
+                                  /*await showDialog<void>(
+                                      context: context,
+                                      builder: (context) => AlertDialog(
+                                            content: Stack(
+                                              clipBehavior: Clip.none,
+                                              children: <Widget>[
+                                                Positioned(
+                                                  right: -40,
+                                                  top: -40,
+                                                  child: InkResponse(
+                                                    onTap: () {
+                                                      Navigator.of(context)
+                                                          .pop();
+                                                    },
+                                                    child: const CircleAvatar(
+                                                      backgroundColor:
+                                                          Colors.red,
+                                                      child: Icon(Icons.close),
+                                                    ),
+                                                  ),
+                                                ),
+                                                Form(
+                                                  key: _formKey,
+                                                  child: Column(
+                                                    mainAxisSize:
+                                                        MainAxisSize.min,
+                                                    children: <Widget>[
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8),
+                                                        child: TextFormField(),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8),
+                                                        child: TextFormField(),
+                                                      ),
+                                                      Padding(
+                                                        padding:
+                                                            const EdgeInsets
+                                                                .all(8),
+                                                        child: ElevatedButton(
+                                                          child: const Text(
+                                                              'Submit'),
+                                                          onPressed: () {
+                                                            if (_formKey
+                                                                .currentState!
+                                                                .validate()) {
+                                                              _formKey
+                                                                  .currentState!
+                                                                  .save();
+                                                            }
+                                                          },
+                                                        ),
+                                                      )
+                                                    ],
+                                                  ),
+                                                ),
+                                              ],
+                                            ),
+                                          ));*/
+                                },
+                                child: Text("Add Notes"),
+                              ),
                             ),
                           ],
                         ),
@@ -296,91 +414,93 @@ class _NewRecipePageState extends State<NewRecipePage> {
                     child: FloatingActionButton(
                       onPressed: () async {
                         if (_formKey.currentState!.validate()) {
-                        Recipe recipe = Recipe(
-                          name: _recipeController.text,
-                          yieldValue: _yieldController1.text,
-                          time: int.parse(_timeController2.text),
-                          timeUnit: selectedTime!,
-                          imageName: _imageName != null
-                              ? path.extension(_imageName!)
-                              : null,
-                          catagoryId: widget.catagoryId!,
-                        );
-                  
-                        int recipeId = await recipe.insertRecipe();
-                        log("test recipe id: $recipeId");
-                  
-                        List<int> ingredientIds = [];
-                        for (int i = 0;
-                            i < listOfNameControllerIngredients.length;
-                            i++) {
-                          Ingredient ingredient = Ingredient(
-                              recipeId: recipeId,
-                              ingredientName:
-                                  listOfNameControllerIngredients[i].text,
-                              amount:
-                                  double.parse(listOfNameControllerUnits[i].text),
-                              unit: selectedUnit[i]!,
-                              sequence: i + 1);
-                          ingredientIds.add(await ingredient.insertIngredient());
-                        }
-                  
-                        List<int> stepIds = [];
-                        for (int i = 0;
-                            i < listOfNameControllerSteps.length;
-                            i++) {
-                          recipeStep step = recipeStep(
-                            recipeId: recipeId,
-                            sequence: i + 1,
-                            description: listOfNameControllerSteps[i].text,
+                          Recipe recipe = Recipe(
+                            name: _recipeController.text,
+                            yieldValue: _yieldController1.text,
+                            time: int.parse(_timeController2.text),
+                            timeUnit: selectedTime!,
+                            imageName: _imageName != null
+                                ? path.extension(_imageName!)
+                                : null,
+                            catagoryId: widget.catagoryId!,
                           );
-                          stepIds.add(await step.insertStep());
-                        }
-                  
-                        //var response = await http.get(Uri.parse(_image));
-                        if (_imageName != null) {
-                          Directory documentDirectory =
-                              await getApplicationDocumentsDirectory();
-                          String imgPath = path.join(documentDirectory.path,
-                              'image');
-                          if (!await Directory(imgPath).exists()) {
-                            Directory imgDir = Directory(imgPath);
-                            await imgDir.create(recursive: true);
+
+                          int recipeId = await recipe.insertRecipe();
+                          log("test recipe id: $recipeId");
+
+                          List<int> ingredientIds = [];
+                          for (int i = 0;
+                              i < listOfNameControllerIngredients.length;
+                              i++) {
+                            Ingredient ingredient = Ingredient(
+                                recipeId: recipeId,
+                                ingredientName:
+                                    listOfNameControllerIngredients[i].text,
+                                amount: double.parse(
+                                    listOfNameControllerUnits[i].text),
+                                unit: selectedUnit[i]!,
+                                sequence: i + 1);
+                            ingredientIds
+                                .add(await ingredient.insertIngredient());
                           }
-                  
-                          String newImgName =
-                              recipeId.toString() + path.extension(_imageName!);
-                  
-                          imgPath = path.join(imgPath, newImgName);
-                          File imgFile = File(imgPath);
-                          try {
-                            if (await imgFile.exists()) {
-                              // If the file exists, delete it before writing the new data
-                              await imgFile.delete();
+
+                          List<int> stepIds = [];
+                          for (int i = 0;
+                              i < listOfNameControllerSteps.length;
+                              i++) {
+                            recipeStep step = recipeStep(
+                              recipeId: recipeId,
+                              sequence: i + 1,
+                              description: listOfNameControllerSteps[i].text,
+                            );
+                            stepIds.add(await step.insertStep());
+                          }
+
+                          //var response = await http.get(Uri.parse(_image));
+                          if (_imageName != null) {
+                            Directory documentDirectory =
+                                await getApplicationDocumentsDirectory();
+                            String imgPath =
+                                path.join(documentDirectory.path, 'image');
+                            if (!await Directory(imgPath).exists()) {
+                              Directory imgDir = Directory(imgPath);
+                              await imgDir.create(recursive: true);
                             }
-                  
-                            await _image!.copy(imgPath);
-                  
-                            //await imgFile.writeAsBytes(bytes, flush: true);
-                            log('Image saved to: $imgPath');
-                          } catch (e) {
-                            log('Error saving image: $e');
-                          }
-                        } else {}
-                  
-                        // await _image.writeAsBytes(response.bodyBytes);
-                  
-                        setState(() {
-                          Navigator.pushNamed(context, 'catagory', arguments: {"catagoryId": widget.catagoryId});
-                        });
+
+                            String newImgName = recipeId.toString() +
+                                path.extension(_imageName!);
+
+                            imgPath = path.join(imgPath, newImgName);
+                            File imgFile = File(imgPath);
+                            try {
+                              if (await imgFile.exists()) {
+                                // If the file exists, delete it before writing the new data
+                                await imgFile.delete();
+                              }
+
+                              await _image!.copy(imgPath);
+
+                              //await imgFile.writeAsBytes(bytes, flush: true);
+                              log('Image saved to: $imgPath');
+                            } catch (e) {
+                              log('Error saving image: $e');
+                            }
+                          } else {}
+
+                          // await _image.writeAsBytes(response.bodyBytes);
+
+                          setState(() {
+                            Navigator.pushNamed(context, 'catagory',
+                                arguments: {"catagoryId": widget.catagoryId});
+                          });
                         }
                       },
                       child: Text("Done"),
                     ),
                   ),
-                                ],
-                              ),
-                ))),
+                ],
+              ),
+            ))),
       ),
     );
   }

@@ -18,8 +18,7 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
+  
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -31,13 +30,6 @@ class MyApp extends StatelessWidget {
       ),
       initialRoute: "home",
       onGenerateRoute: CookingRouter.generateRoute,
-      /*routes: {
-        "home": (context) => const MyHomePage(title: "What's Cooking?"),
-        "catagory": (context) => const CatagoryPage(),
-        "addRecipe": (context) => const NewRecipePage(),
-        //"editRecipe": (context) => const EditRecipePage(recipeId: arguments["id"],),
-        //"finalRecipe": (context) => const FinishedRecipe(recipeId: ,),
-      }*/
     );
   }
 }

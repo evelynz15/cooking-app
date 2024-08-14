@@ -13,7 +13,7 @@ import 'package:cookingapp/models/step.dart';
 import 'dart:developer';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
-import 'package:cookingapp/ui/router.dart'; 
+import 'package:cookingapp/ui/router.dart';
 
 enum ImageSourceType { gallery, camera }
 
@@ -21,7 +21,8 @@ class EditRecipePage extends StatefulWidget {
   final int recipeId;
   final int catagoryId;
 
-  const EditRecipePage({super.key, required this.recipeId, required this.catagoryId});
+  const EditRecipePage(
+      {super.key, required this.recipeId, required this.catagoryId});
 
   @override
   State<EditRecipePage> createState() => _EditRecipePageState();
@@ -241,6 +242,61 @@ class _EditRecipePageState extends State<EditRecipePage> {
                                       ),
                                     ],
                                   ),
+                                  SizedBox(height: 30),
+                                  SizedBox(
+                                    width: 120,
+                                    height: 40,
+                                    child: OutlinedButton(
+                                      onPressed: () async {
+                                        showDialog(
+                                            context: context,
+                                            builder: (BuildContext context) {
+                                              return AlertDialog(
+                                                scrollable: true,
+                                                title: Text('Notes'),
+                                                content: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(8.0),
+                                                  child: Form(
+                                                    child: Column(
+                                                      children: <Widget>[
+                                                        SizedBox(
+                                                          height: 200,
+                                                          child: TextFormField(
+                                                            maxLines:
+                                                                null, // Set this
+                                                            expands:
+                                                                true, // and this
+                                                            keyboardType:
+                                                                TextInputType
+                                                                    .multiline,
+                                                            decoration:
+                                                                InputDecoration(
+                                                              hintText:
+                                                                  'Enter your notes',
+                                                              border:
+                                                                  OutlineInputBorder(),
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      ],
+                                                    ),
+                                                  ),
+                                                ),
+                                                actions: [
+                                                  ElevatedButton(
+                                                      child: Text("Done"),
+                                                      onPressed: () {
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      })
+                                                ],
+                                              );
+                                            });
+                                      },
+                                      child: Text("Add Notes"),
+                                    ),
+                                  ),
                                 ],
                               ),
                             ),
@@ -422,7 +478,8 @@ class _EditRecipePageState extends State<EditRecipePage> {
                                   imgPath = path.join(imgPath, newImgName);
                                   File imgFile = File(imgPath);
                                   try {
-                                    if (await imgFile.exists() && isImageChanged == true) {
+                                    if (await imgFile.exists() &&
+                                        isImageChanged == true) {
                                       // If the file exists, delete it before writing the new data
                                       await imgFile.delete();
                                       Image img = Image.file(imgFile);
@@ -437,7 +494,10 @@ class _EditRecipePageState extends State<EditRecipePage> {
                                 } else {}
 
                                 setState(() {
-                                  Navigator.pushNamed(context, 'catagory', arguments: {"catagoryId": recipeSnap.data!.catagoryId});
+                                  Navigator.pushNamed(
+                                      context, 'catagory', arguments: {
+                                    "catagoryId": recipeSnap.data!.catagoryId
+                                  });
                                 });
                               }
                             },
@@ -457,12 +517,18 @@ class _EditRecipePageState extends State<EditRecipePage> {
   Widget build(BuildContext context) {
     String? catagoryName;
     switch (widget.catagoryId) {
-      case 0: catagoryName = "APPETIZERS";
-      case 1: catagoryName = "ENTREES";
-      case 2: catagoryName = "DESSERTS";
-      case 3: catagoryName = "LUNCH";
-      case 4: catagoryName = "BREAKFAST";
-      case 5: catagoryName = "OTHER";
+      case 0:
+        catagoryName = "APPETIZERS";
+      case 1:
+        catagoryName = "ENTREES";
+      case 2:
+        catagoryName = "DESSERTS";
+      case 3:
+        catagoryName = "LUNCH";
+      case 4:
+        catagoryName = "BREAKFAST";
+      case 5:
+        catagoryName = "OTHER";
     }
 
     return Scaffold(

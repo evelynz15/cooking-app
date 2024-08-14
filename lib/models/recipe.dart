@@ -10,6 +10,7 @@ class Recipe {
   final String timeUnit;
   final int catagoryId;
   String? imageName;
+  String? notes;
   List<Ingredient>? ingredientList = [];
   List<recipeStep>? stepList = [];  
 
@@ -21,6 +22,7 @@ class Recipe {
     required this.timeUnit,
     required this.catagoryId,
     this.imageName,
+    this.notes,
     this.ingredientList,
     this.stepList,
   });
@@ -34,6 +36,7 @@ class Recipe {
       timeUnit: dataMap['time_unit'],
       imageName: dataMap['image'],
       catagoryId: dataMap['catagory_id'],
+      notes: dataMap['notes'],
     );
   }
 
@@ -46,12 +49,13 @@ class Recipe {
       'time_unit': timeUnit,
       'image': imageName,
       'catagory_id': catagoryId,
+      'notes': notes,
     };
   }
 
   Future<int> insertRecipe() async {
     DbHelper db = DbHelper();
-    return await db.insertRecipe(name, yieldValue, time, timeUnit, imageName, catagoryId);
+    return await db.insertRecipe(name, yieldValue, time, timeUnit, imageName, catagoryId, notes);
   }
 
   static Future<Recipe> getRecipeById(id) async {

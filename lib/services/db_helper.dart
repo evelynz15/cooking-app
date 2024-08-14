@@ -44,6 +44,7 @@ class DbHelper {
   "time_unit"	TEXT,
   "image"	TEXT,
   "catagory_id"	INTEGER NOT NULL,
+  "notes"	TEXT,
   PRIMARY KEY("id" AUTOINCREMENT) 
   )
   ''');
@@ -75,7 +76,7 @@ class DbHelper {
       Database db, int oldVersion, int newVersion) async {}
 
   Future<int> insertRecipe(String name, String yieldValue, int time,
-      String timeUnit, String? imageName, int catagoryId) async {
+      String timeUnit, String? imageName, int catagoryId, String? notes) async {
     Map<String, Object?> recipeMap = {
       'name': name,
       'yield': yieldValue,
@@ -83,6 +84,7 @@ class DbHelper {
       'time_unit': timeUnit,
       'image': imageName,
       'catagory_id': catagoryId,
+      'notes': notes,
     };
 
     try {
