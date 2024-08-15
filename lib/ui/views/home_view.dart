@@ -1,3 +1,4 @@
+import 'package:cookingapp/ui/views/setting_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cookingapp/ui/views/catagory_view.dart';
 import 'package:cookingapp/ui/router.dart';
@@ -142,78 +143,95 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
+
+      //learned from post at 
+      //https://stackoverflow.com/questions/57888097/flutter-how-to-set-drawer-header-width-to-the-max
       drawer: Drawer(
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.inversePrimary,
-              ),
-              child: Text("What's Cooking?"),
+          child: 
+                Column(
+                  mainAxisAlignment: MainAxisAlignment
+                    .spaceBetween, 
+             // padding: EdgeInsets.zero,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Flexible(
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: <Widget>[
+                DrawerHeader(
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                  child: 
+                    Text("What's Cooking?"),
+                ),
+                ListTile(
+                  title: const Text('Home'),
+                  selected: _selectedIndex == 0,
+                  onTap: () {
+                    Navigator.pop(context);
+                    setState(() {
+                      Navigator.pushNamed(context, 'home');
+                    });
+                  },
+                ),
+                ListTile(
+                  title: const Text('Appetizers'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigateToCatagory(0);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Entrees'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigateToCatagory(1);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Desserts'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigateToCatagory(2);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Lunch'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigateToCatagory(3);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Breakfast'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigateToCatagory(4);
+                  },
+                ),
+                ListTile(
+                  title: const Text('Others'),
+                  onTap: () {
+                    Navigator.pop(context);
+                    navigateToCatagory(5);
+                  },
+                ),
+              ],
+                    ),
+                ),
+                 ListTile(
+                      title: const Text('Settings'),
+                      onTap: () {
+                        Navigator.pop(context);
+                        //Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingView()));
+                      },
+                    ),
+                  ]
             ),
-            ListTile(
-              title: const Text('Home'),
-              selected: _selectedIndex == 0,
-              onTap: () {
-                Navigator.pop(context);
-                setState(() {
-                  Navigator.pushNamed(context, 'home');
-                });
-              },
-            ),
-            ListTile(
-              title: const Text('Appetizers'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToCatagory(0);
-              },
-            ),
-            ListTile(
-              title: const Text('Entrees'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToCatagory(1);
-              },
-            ),
-            ListTile(
-              title: const Text('Desserts'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToCatagory(2);
-              },
-            ),
-            ListTile(
-              title: const Text('Lunch'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToCatagory(3);
-              },
-            ),
-            ListTile(
-              title: const Text('Breakfast'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToCatagory(4);
-              },
-            ),
-            ListTile(
-              title: const Text('Others'),
-              onTap: () {
-                Navigator.pop(context);
-                navigateToCatagory(5);
-              },
-            ),
-            /*ListTile(
-              title: const Text('Stepper'),
-              onTap: () {
-                Navigator.pop(context);
-                Navigator.of(context).push(MaterialPageRoute(builder: (context) => FormPage()));
-              },
-            ),*/
-          ],
-        ),
-      ),
+          ),
+        
+      
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Center(

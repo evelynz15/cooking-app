@@ -12,6 +12,7 @@ import 'package:cookingapp/models/recipe.dart';
 import 'package:cookingapp/models/ingredient.dart';
 import 'package:cookingapp/models/step.dart';
 import 'package:cookingapp/ui/router.dart';
+import 'package:image_cropper/image_cropper.dart';
 
 enum ImageSourceType { gallery, camera }
 
@@ -26,6 +27,14 @@ class EditFormPage extends StatefulWidget {
 }
 
 class _EditFormPageState extends State<EditFormPage> {
+  List<GlobalKey<FormState>> _formKeys = [
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>(),
+    GlobalKey<FormState>()
+  ];
+
   Directory? documentDirectory;
   File? _image;
   var imagePicker;
@@ -86,6 +95,21 @@ class _EditFormPageState extends State<EditFormPage> {
     return await Recipe.getRecipeById(widget.recipeId);
   }
 
+  Future<File?> _cropImage({required File imageFile}) async {
+    try {
+      CroppedFile? croppedImg = await ImageCropper()
+          .cropImage(sourcePath: imageFile.path, compressQuality: 100);
+      if (croppedImg == null) {
+        return null;
+      } else {
+        return File(croppedImg.path);
+      }
+    } catch (e) {
+      print(e);
+    }
+    return null;
+  }
+
   Widget editRecipeWidget() {
     return FutureBuilder(
         future: recipeData,
@@ -131,47 +155,50 @@ class _EditFormPageState extends State<EditFormPage> {
                       currentStep > 0 ? StepState.complete : StepState.indexed,
                   isActive: currentStep >= 0,
                   title: const Text("About"),
-                  content: Column(
-                    children: [
-                      CustomInput(
-                        hint: "Title of Recipe",
-                        inputBorder: UnderlineInputBorder(),
-                        controller: _recipeController!,
-                      ),
-                      CustomInput(
-                        hint: "Yield",
-                        inputBorder: UnderlineInputBorder(),
-                        controller: _yieldController!,
-                      ),
-                      Row(
-                        children: [
-                          SizedBox(
-                            width: 70,
-                            child: CustomInput(
-                              hint: "Time",
-                              inputBorder: UnderlineInputBorder(),
-                              controller: _timeController!,
+                  content: Form(
+                    key: _formKeys[0],
+                    child: Column(
+                      children: [
+                        CustomInput(
+                          hint: "Title of Recipe",
+                          inputBorder: UnderlineInputBorder(),
+                          controller: _recipeController!,
+                        ),
+                        CustomInput(
+                          hint: "Yield",
+                          inputBorder: UnderlineInputBorder(),
+                          controller: _yieldController!,
+                        ),
+                        Row(
+                          children: [
+                            SizedBox(
+                              width: 70,
+                              child: CustomInput(
+                                hint: "Time",
+                                inputBorder: UnderlineInputBorder(),
+                                controller: _timeController!,
+                              ),
                             ),
-                          ),
-                          DropdownButton<String>(
-                            value: selectedTime,
-                            hint: Text('Unit'),
-                            onChanged: (String? newValue) {
-                              setState(() {
-                                selectedTime = newValue ?? '';
-                              });
-                            },
-                            items: timeUnits
-                                .map<DropdownMenuItem<String>>((String value) {
-                              return DropdownMenuItem<String>(
-                                value: value,
-                                child: Text(value),
-                              );
-                            }).toList(),
-                          ),
-                        ],
-                      ),
-                    ],
+                            DropdownButton<String>(
+                              value: selectedTime,
+                              hint: Text('Unit'),
+                              onChanged: (String? newValue) {
+                                setState(() {
+                                  selectedTime = newValue ?? '';
+                                });
+                              },
+                              items: timeUnits.map<DropdownMenuItem<String>>(
+                                  (String value) {
+                                return DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Step(
@@ -183,7 +210,7 @@ class _EditFormPageState extends State<EditFormPage> {
                     children: [
                       Container(
                         height: 160,
-                        width: 160,
+                        //width: 160,
                         child: _image != null
                             ? Image.file(
                                 _image!,
@@ -209,6 +236,7 @@ class _EditFormPageState extends State<EditFormPage> {
                         child: PopupMenuButton<ImageSourceType>(
                           initialValue: selectedImageSource,
                           onSelected: (ImageSourceType item) async {
+                            File? tempImage;
                             imagePicker = ImagePicker();
                             var source = item == ImageSourceType.camera
                                 ? ImageSource.camera
@@ -217,10 +245,12 @@ class _EditFormPageState extends State<EditFormPage> {
                                 source: source,
                                 imageQuality: 50,
                                 preferredCameraDevice: CameraDevice.front);
+                            tempImage = File(image.path);
+                            tempImage = await _cropImage(imageFile: tempImage);
                             setState(() {
+                              _image = tempImage;
                               selectedImageSource = item;
                               _imageName = path.basename(image.path);
-                              _image = File(image.path);
                               isImageChanged = true;
                             });
                           },
@@ -250,78 +280,82 @@ class _EditFormPageState extends State<EditFormPage> {
                       currentStep > 2 ? StepState.complete : StepState.indexed,
                   isActive: currentStep >= 2,
                   title: Text("Ingredients"),
-                  content: Column(
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(16.0),
-                          itemCount: listOfIngredientControllers.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                SizedBox(
-                                  width: 150,
-                                  child: CustomInput(
-                                    hint: "${index + 1}",
-                                    inputBorder: UnderlineInputBorder(),
-                                    controller:
-                                        listOfIngredientControllers[index],
+                  content: Form(
+                    key: _formKeys[2],
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 150,
+                          child: ListView.builder(
+                            padding: EdgeInsets.all(16.0),
+                            itemCount: listOfIngredientControllers.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  SizedBox(
+                                    width: 150,
+                                    child: CustomInput(
+                                      hint: "${index + 1}",
+                                      inputBorder: UnderlineInputBorder(),
+                                      controller:
+                                          listOfIngredientControllers[index],
+                                    ),
                                   ),
-                                ),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 50,
-                                      child: CustomInput(
-                                        hint: "Amount",
-                                        inputBorder: UnderlineInputBorder(),
-                                        controller:
-                                            listOfUnitControllers[index],
+                                  Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 50,
+                                        child: CustomInput(
+                                          hint: "Amount",
+                                          inputBorder: UnderlineInputBorder(),
+                                          controller:
+                                              listOfUnitControllers[index],
+                                        ),
                                       ),
-                                    ),
-                                    SizedBox(
-                                      width: 70,
-                                      child: DropdownButton<String>(
-                                        value:
-                                            selectedIngredientList![index].unit,
-                                        hint: Text('Unit'),
-                                        onChanged: (String? newValue) {
-                                          setState(() {
-                                            selectedIngredientList![index]
-                                                .unit = newValue ?? '';
-                                          });
-                                        },
-                                        items: units
-                                            .map<DropdownMenuItem<String>>(
-                                                (String value) {
-                                          return DropdownMenuItem<String>(
-                                            value: value,
-                                            child: Text(value),
-                                          );
-                                        }).toList(),
+                                      SizedBox(
+                                        width: 70,
+                                        child: DropdownButton<String>(
+                                          value: selectedIngredientList![index]
+                                              .unit,
+                                          hint: Text('Unit'),
+                                          onChanged: (String? newValue) {
+                                            setState(() {
+                                              selectedIngredientList![index]
+                                                  .unit = newValue ?? '';
+                                            });
+                                          },
+                                          items: units
+                                              .map<DropdownMenuItem<String>>(
+                                                  (String value) {
+                                            return DropdownMenuItem<String>(
+                                              value: value,
+                                              child: Text(value),
+                                            );
+                                          }).toList(),
+                                        ),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            );
-                          },
+                                    ],
+                                  ),
+                                ],
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      SizedBox(
-                        width: 70,
-                        height: 30,
-                        child: FloatingActionButton(
-                          onPressed: addNewIngredient,
-                          child: Icon(Icons.add),
+                        SizedBox(
+                          height: 20,
                         ),
-                      ),
-                    ],
+                        SizedBox(
+                          width: 70,
+                          height: 30,
+                          child: FloatingActionButton(
+                            onPressed: addNewIngredient,
+                            child: Icon(Icons.add),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Step(
@@ -329,34 +363,37 @@ class _EditFormPageState extends State<EditFormPage> {
                       currentStep > 3 ? StepState.complete : StepState.indexed,
                   isActive: currentStep >= 3,
                   title: const Text("Procedure"),
-                  content: Column(
-                    children: [
-                      SizedBox(
-                        height: 150,
-                        child: ListView.builder(
-                          padding: EdgeInsets.all(16.0),
-                          itemCount: listOfStepControllers.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return CustomInput(
-                              hint: "${index + 1}",
-                              inputBorder: UnderlineInputBorder(),
-                              controller: listOfStepControllers[index],
-                            );
-                          },
+                  content: Form(
+                    key: _formKeys[3],
+                    child: Column(
+                      children: [
+                        SizedBox(
+                          height: 150,
+                          child: ListView.builder(
+                            padding: EdgeInsets.all(16.0),
+                            itemCount: listOfStepControllers.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return CustomInput(
+                                hint: "${index + 1}",
+                                inputBorder: UnderlineInputBorder(),
+                                controller: listOfStepControllers[index],
+                              );
+                            },
+                          ),
                         ),
-                      ),
-                      SizedBox(
-                        height: 20,
-                      ),
-                      Container(
-                        width: 70,
-                        height: 30,
-                        child: FloatingActionButton(
-                          onPressed: addNewStep,
-                          child: Icon(Icons.add),
+                        SizedBox(
+                          height: 20,
                         ),
-                      ),
-                    ],
+                        Container(
+                          width: 70,
+                          height: 30,
+                          child: FloatingActionButton(
+                            onPressed: addNewStep,
+                            child: Icon(Icons.add),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
                 Step(
@@ -364,14 +401,17 @@ class _EditFormPageState extends State<EditFormPage> {
                       currentStep > 4 ? StepState.complete : StepState.indexed,
                   isActive: currentStep >= 4,
                   title: const Text("Additional Notes"),
-                  content: Column(
-                    children: [
-                      CustomInput(
-                        hint: "Notes",
-                        inputBorder: OutlineInputBorder(),
-                        controller: _notesController,
-                      ),
-                    ],
+                  content: Form(
+                    key: _formKeys[4],
+                    child: Column(
+                      children: [
+                        CustomInput(
+                          hint: "Notes",
+                          inputBorder: OutlineInputBorder(),
+                          controller: _notesController,
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ];
@@ -381,121 +421,145 @@ class _EditFormPageState extends State<EditFormPage> {
               Stepper(
                 type: StepperType.vertical,
                 currentStep: currentStep,
+                controlsBuilder:
+                    (BuildContext context, ControlsDetails details) {
+                  return Row(
+                    children: <Widget>[
+                      FilledButton(
+                        onPressed: details.onStepContinue,
+                        child: currentStep == 4 ? Text('Save') : Text('Next'),
+                      ),
+                      SizedBox(width: 50),
+                      FilledButton.tonal(
+                        onPressed: details.onStepCancel,
+                        child: currentStep == 0 ? Text('Cancel') : Text('Back'),
+                      ),
+                    ],
+                  );
+                },
                 onStepCancel: () => currentStep == 0
                     ? Navigator.pushNamed(context, 'catagory',
                         arguments: {"catagoryId": widget.catagoryId})
                     : setState(() {
                         currentStep -= 1;
                       }),
-                onStepContinue: () {
+                onStepContinue: () async {
                   bool isLastStep = (currentStep == getSteps().length - 1);
                   if (isLastStep) {
-                    //Do something with this information
+                    List<Ingredient> ingredientItems = [];
+                    for (int i = 0;
+                        i < listOfIngredientControllers.length;
+                        i++) {
+                      Ingredient ingredient = Ingredient(
+                          id: selectedIngredientList![i].id != null
+                              ? recipeSnap.data!.ingredientList![i].id
+                              : null,
+                          recipeId: widget.recipeId!,
+                          ingredientName: listOfIngredientControllers[i].text,
+                          amount: double.parse(listOfUnitControllers[i].text),
+                          unit: selectedIngredientList![i].unit,
+                          sequence: i + 1);
+                      ingredientItems.add(ingredient);
+                    }
+
+                    List<recipeStep> stepItems = [];
+                    for (int i = 0; i < listOfStepControllers.length; i++) {
+                      recipeStep step = recipeStep(
+                        id: selectedStepList![i].id != null
+                            ? recipeSnap.data!.stepList![i].id
+                            : null,
+                        recipeId: widget.recipeId!,
+                        sequence: i + 1,
+                        description: listOfStepControllers[i].text,
+                      );
+                      stepItems.add(step);
+                    }
+
+                    Recipe recipe = Recipe(
+                      id: widget.recipeId,
+                      name: _recipeController!.text,
+                      yieldValue: _yieldController!.text,
+                      time: int.parse(_timeController!.text),
+                      timeUnit: selectedTime!,
+                      imageName: _imageName != null
+                          ? path.extension(_imageName!)
+                          : null,
+                      notes: _notesController != null &&
+                              _notesController!.text.isNotEmpty
+                          ? _notesController!.text
+                          : null,
+                      catagoryId: widget.catagoryId!,
+                      ingredientList: ingredientItems,
+                      stepList: stepItems,
+                    );
+                    await recipe.updateRecipeInfo(recipe);
+
+                    int recipeId = widget.recipeId!;
+                    log("recipe $recipeId updated");
+
+                    //var response = await http.get(Uri.parse(_image));
+                    if (_imageName != null) {
+                      Directory documentDirectory =
+                          await getApplicationDocumentsDirectory();
+                      String imgPath =
+                          path.join(documentDirectory.path, 'image');
+                      if (!await Directory(imgPath).exists()) {
+                        Directory imgDir = Directory(imgPath);
+                        await imgDir.create(recursive: true);
+                      }
+
+                      String newImgName =
+                          recipeId.toString() + path.extension(_imageName!);
+
+                      imgPath = path.join(imgPath, newImgName);
+                      File imgFile = File(imgPath);
+                      try {
+                        if (await imgFile.exists() && isImageChanged == true) {
+                          // If the file exists, delete it before writing the new data
+                          await imgFile.delete();
+                          Image img = Image.file(imgFile);
+                          await img.image.evict();
+                        }
+                        await _image!.copy(imgPath);
+                        log('Image saved to: $imgPath');
+                      } catch (e) {
+                        log('Error saving image: $e');
+                      }
+                    } else {}
+
+                    setState(() {
+                      Navigator.pushNamed(context, 'finalRecipe', arguments: {
+                        'recipeId': recipeId,
+                        "catagoryId": widget.catagoryId
+                      });
+                    });
                   } else {
                     setState(() {
-                      currentStep += 1;
+                      if (currentStep != 1) {
+                        if (_formKeys[currentStep].currentState!.validate()) {
+                          currentStep++;
+                        }
+                      } else {
+                        currentStep++;
+                      }
                     });
                   }
                 },
-                onStepTapped: (step) => setState(() {
+                /*onStepTapped: (step) => setState(() {
                   currentStep = step;
-                }),
+                }),*/
                 steps: getSteps(),
               ),
-              CustomBtn(
+              /*CustomBtn(
                 title: const Text(
                   "Save",
                   style: TextStyle(color: Colors.white),
                 ),
                 callback: () async {
                   //if (_formKey.currentState!.validate()) {
-
-                  List<Ingredient> ingredientItems = [];
-                  for (int i = 0; i < listOfIngredientControllers.length; i++) {
-                    Ingredient ingredient = Ingredient(
-                        id: selectedIngredientList![i].id != null
-                            ? recipeSnap.data!.ingredientList![i].id
-                            : null,
-                        recipeId: widget.recipeId!,
-                        ingredientName: listOfIngredientControllers[i].text,
-                        amount: double.parse(listOfUnitControllers[i].text),
-                        unit: selectedIngredientList![i].unit,
-                        sequence: i + 1);
-                    ingredientItems.add(ingredient);
-                  }
-
-                  List<recipeStep> stepItems = [];
-                  for (int i = 0; i < listOfStepControllers.length; i++) {
-                    recipeStep step = recipeStep(
-                      id: selectedStepList![i].id != null
-                          ? recipeSnap.data!.stepList![i].id
-                          : null,
-                      recipeId: widget.recipeId!,
-                      sequence: i + 1,
-                      description: listOfStepControllers[i].text,
-                    );
-                    stepItems.add(step);
-                  }
-
-                  Recipe recipe = Recipe(
-                    id: widget.recipeId,
-                    name: _recipeController!.text,
-                    yieldValue: _yieldController!.text,
-                    time: int.parse(_timeController!.text),
-                    timeUnit: selectedTime!,
-                    imageName:
-                        _imageName != null ? path.extension(_imageName!) : null,
-                    notes: _notesController != null &&
-                            _notesController!.text.isNotEmpty
-                        ? _notesController!.text
-                        : null,
-                    catagoryId: widget.catagoryId!,
-                    ingredientList: ingredientItems,
-                    stepList: stepItems,
-                  );
-                  await recipe.updateRecipeInfo(recipe);
-
-                  int recipeId = widget.recipeId!;
-                  log("recipe $recipeId updated");
-
-                  //var response = await http.get(Uri.parse(_image));
-                  if (_imageName != null) {
-                    Directory documentDirectory =
-                        await getApplicationDocumentsDirectory();
-                    String imgPath = path.join(documentDirectory.path, 'image');
-                    if (!await Directory(imgPath).exists()) {
-                      Directory imgDir = Directory(imgPath);
-                      await imgDir.create(recursive: true);
-                    }
-
-                    String newImgName =
-                        recipeId.toString() + path.extension(_imageName!);
-
-                    imgPath = path.join(imgPath, newImgName);
-                    File imgFile = File(imgPath);
-                    try {
-                      if (await imgFile.exists() && isImageChanged == true) {
-                        // If the file exists, delete it before writing the new data
-                        await imgFile.delete();
-                        Image img = Image.file(imgFile);
-                        await img.image.evict();
-                      }
-                      await _image!.copy(imgPath);
-                      log('Image saved to: $imgPath');
-                    } catch (e) {
-                      log('Error saving image: $e');
-                    }
-                  } else {}
-
-                  setState(() {
-                    Navigator.pushNamed(context, 'finalRecipe', arguments: {
-                      'recipeId': recipeId,
-                      "catagoryId": widget.catagoryId
-                    });
-                  });
                   //}
                 },
-              )
+              )*/
             ]);
           }
         });

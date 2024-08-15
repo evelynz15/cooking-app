@@ -86,7 +86,6 @@ class _FormPageState extends State<FormPage> {
     });
   }
 
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -115,7 +114,8 @@ class _FormPageState extends State<FormPage> {
                         SizedBox(width: 50),
                         FilledButton.tonal(
                           onPressed: details.onStepCancel,
-                          child: currentStep == 0 ? Text('Cancel') : Text('Back'),
+                          child:
+                              currentStep == 0 ? Text('Cancel') : Text('Back'),
                         ),
                       ],
                     );
@@ -126,10 +126,88 @@ class _FormPageState extends State<FormPage> {
                       : setState(() {
                           currentStep -= 1;
                         }),
-                  onStepContinue: () {
+                  onStepContinue: () async {
                     bool isLastStep = (currentStep == getSteps().length - 1);
                     if (isLastStep) {
-                      //Do something with this information
+                      Recipe recipe = Recipe(
+                        name: _recipeController.text,
+                        yieldValue: _yieldController.text,
+                        time: int.parse(_timeController.text),
+                        timeUnit: selectedTime!,
+                        imageName: _imageName != null
+                            ? path.extension(_imageName!)
+                            : null,
+                        notes: _notesController.text.isNotEmpty
+                            ? _notesController.text
+                            : null,
+                        catagoryId: widget.catagoryId!,
+                      );
+
+                      int recipeId = await recipe.insertRecipe();
+                      log("test recipe id: $recipeId");
+
+                      List<int> ingredientIds = [];
+                      for (int i = 0;
+                          i < listOfIngredientControllers.length;
+                          i++) {
+                        Ingredient ingredient = Ingredient(
+                            recipeId: recipeId,
+                            ingredientName: listOfIngredientControllers[i].text,
+                            amount: double.parse(listOfUnitControllers[i].text),
+                            unit: selectedUnit[i]!,
+                            sequence: i + 1);
+                        ingredientIds.add(await ingredient.insertIngredient());
+                      }
+
+                      List<int> stepIds = [];
+                      for (int i = 0; i < listOfStepControllers.length; i++) {
+                        recipeStep step = recipeStep(
+                          recipeId: recipeId,
+                          sequence: i + 1,
+                          description: listOfStepControllers[i].text,
+                        );
+                        stepIds.add(await step.insertStep());
+                      }
+
+                      //var response = await http.get(Uri.parse(_image));
+                      if (_imageName != null) {
+                        Directory documentDirectory =
+                            await getApplicationDocumentsDirectory();
+                        String imgPath =
+                            path.join(documentDirectory.path, 'image');
+                        if (!await Directory(imgPath).exists()) {
+                          Directory imgDir = Directory(imgPath);
+                          await imgDir.create(recursive: true);
+                        }
+
+                        String newImgName =
+                            recipeId.toString() + path.extension(_imageName!);
+
+                        imgPath = path.join(imgPath, newImgName);
+                        File imgFile = File(imgPath);
+                        try {
+                          if (await imgFile.exists()) {
+                            // If the file exists, delete it before writing the new data
+                            await imgFile.delete();
+                          }
+
+                          await _image!.copy(imgPath);
+
+                          //await imgFile.writeAsBytes(bytes, flush: true);
+                          log('Image saved to: $imgPath');
+                        } catch (e) {
+                          log('Error saving image: $e');
+                        }
+                      } else {}
+
+                      // await _image.writeAsBytes(response.bodyBytes);
+
+                      setState(() {
+                        Navigator.pushNamed(context, 'finalRecipe', arguments: {
+                          'recipeId': recipeId,
+                          "catagoryId": widget.catagoryId
+                        });
+                      });
                     } else {
                       setState(() {
                         if (currentStep != 1) {
@@ -147,95 +225,17 @@ class _FormPageState extends State<FormPage> {
                   }),*/
                   steps: getSteps(),
                 ),
-                CustomBtn(
+                /*CustomBtn(
                   title: const Text(
                     "Save",
                     style: TextStyle(color: Colors.white),
                   ),
                   callback: () async {
                     //if (_formKey.currentState!.validate()) {
-                    Recipe recipe = Recipe(
-                      name: _recipeController.text,
-                      yieldValue: _yieldController.text,
-                      time: int.parse(_timeController.text),
-                      timeUnit: selectedTime!,
-                      imageName: _imageName != null
-                          ? path.extension(_imageName!)
-                          : null,
-                      notes: _notesController.text.isNotEmpty
-                          ? _notesController.text
-                          : null,
-                      catagoryId: widget.catagoryId!,
-                    );
-
-                    int recipeId = await recipe.insertRecipe();
-                    log("test recipe id: $recipeId");
-
-                    List<int> ingredientIds = [];
-                    for (int i = 0;
-                        i < listOfIngredientControllers.length;
-                        i++) {
-                      Ingredient ingredient = Ingredient(
-                          recipeId: recipeId,
-                          ingredientName: listOfIngredientControllers[i].text,
-                          amount: double.parse(listOfUnitControllers[i].text),
-                          unit: selectedUnit[i]!,
-                          sequence: i + 1);
-                      ingredientIds.add(await ingredient.insertIngredient());
-                    }
-
-                    List<int> stepIds = [];
-                    for (int i = 0; i < listOfStepControllers.length; i++) {
-                      recipeStep step = recipeStep(
-                        recipeId: recipeId,
-                        sequence: i + 1,
-                        description: listOfStepControllers[i].text,
-                      );
-                      stepIds.add(await step.insertStep());
-                    }
-
-                    //var response = await http.get(Uri.parse(_image));
-                    if (_imageName != null) {
-                      Directory documentDirectory =
-                          await getApplicationDocumentsDirectory();
-                      String imgPath =
-                          path.join(documentDirectory.path, 'image');
-                      if (!await Directory(imgPath).exists()) {
-                        Directory imgDir = Directory(imgPath);
-                        await imgDir.create(recursive: true);
-                      }
-
-                      String newImgName =
-                          recipeId.toString() + path.extension(_imageName!);
-
-                      imgPath = path.join(imgPath, newImgName);
-                      File imgFile = File(imgPath);
-                      try {
-                        if (await imgFile.exists()) {
-                          // If the file exists, delete it before writing the new data
-                          await imgFile.delete();
-                        }
-
-                        await _image!.copy(imgPath);
-
-                        //await imgFile.writeAsBytes(bytes, flush: true);
-                        log('Image saved to: $imgPath');
-                      } catch (e) {
-                        log('Error saving image: $e');
-                      }
-                    } else {}
-
-                    // await _image.writeAsBytes(response.bodyBytes);
-
-                    setState(() {
-                      Navigator.pushNamed(context, 'finalRecipe', arguments: {
-                        'recipeId': recipeId,
-                        "catagoryId": widget.catagoryId
-                      });
-                    });
+                    
                     //}
                   },
-                )
+                )*/
               ],
             )),
       ),
@@ -317,7 +317,7 @@ class _FormPageState extends State<FormPage> {
           children: [
             Container(
               height: 160,
-              width: 160,
+              //width: 160,
               child: _image != null
                   ? Image.file(
                       _image!,
