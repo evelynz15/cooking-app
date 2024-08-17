@@ -127,6 +127,8 @@ class _EditFormPageState extends State<EditFormPage> {
                   TextEditingController(text: recipeSnap.data!.yieldValue);
               _timeController =
                   TextEditingController(text: recipeSnap.data!.time.toString());
+              _notesController =
+                  TextEditingController(text: recipeSnap.data!.notes);
               for (Ingredient ingredientInfo
                   in recipeSnap.data!.ingredientList!) {
                 listOfIngredientControllers.add(
@@ -163,11 +165,13 @@ class _EditFormPageState extends State<EditFormPage> {
                           hint: "Title of Recipe",
                           inputBorder: UnderlineInputBorder(),
                           controller: _recipeController!,
+                          maxLength: 40,
                         ),
                         CustomInput(
                           hint: "Yield",
                           inputBorder: UnderlineInputBorder(),
                           controller: _yieldController!,
+                          maxLength: 30,
                         ),
                         Row(
                           children: [
@@ -177,6 +181,8 @@ class _EditFormPageState extends State<EditFormPage> {
                                 hint: "Time",
                                 inputBorder: UnderlineInputBorder(),
                                 controller: _timeController!,
+                                maxLength: 4,
+                                mustBeNumber: true,
                               ),
                             ),
                             DropdownButton<String>(
@@ -301,6 +307,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                       inputBorder: UnderlineInputBorder(),
                                       controller:
                                           listOfIngredientControllers[index],
+                                      maxLength: 40,
                                     ),
                                   ),
                                   Row(
@@ -312,6 +319,8 @@ class _EditFormPageState extends State<EditFormPage> {
                                           inputBorder: UnderlineInputBorder(),
                                           controller:
                                               listOfUnitControllers[index],
+                                          maxLength: 4,
+                                          mustBeNumber: true,
                                         ),
                                       ),
                                       SizedBox(
@@ -377,6 +386,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                 hint: "${index + 1}",
                                 inputBorder: UnderlineInputBorder(),
                                 controller: listOfStepControllers[index],
+                                maxLength: 300,
                               );
                             },
                           ),
@@ -409,6 +419,7 @@ class _EditFormPageState extends State<EditFormPage> {
                           hint: "Notes",
                           inputBorder: OutlineInputBorder(),
                           controller: _notesController,
+                          maxLength: 400,
                         ),
                       ],
                     ),

@@ -271,11 +271,13 @@ class _FormPageState extends State<FormPage> {
                 hint: "Title of Recipe",
                 inputBorder: UnderlineInputBorder(),
                 controller: _recipeController,
+                maxLength: 40,
               ),
               CustomInput(
                 hint: "Yield",
                 inputBorder: UnderlineInputBorder(),
                 controller: _yieldController,
+                maxLength: 30,
               ),
               Row(
                 children: [
@@ -285,6 +287,8 @@ class _FormPageState extends State<FormPage> {
                       hint: "Time",
                       inputBorder: UnderlineInputBorder(),
                       controller: _timeController,
+                      mustBeNumber: true,
+                      maxLength: 4,
                     ),
                   ),
                   DropdownButton<String>(
@@ -402,6 +406,7 @@ class _FormPageState extends State<FormPage> {
                             hint: "${index + 1}",
                             inputBorder: UnderlineInputBorder(),
                             controller: listOfIngredientControllers[index],
+                            maxLength: 40,
                           ),
                         ),
                         Row(
@@ -412,6 +417,8 @@ class _FormPageState extends State<FormPage> {
                                 hint: "Amount",
                                 inputBorder: UnderlineInputBorder(),
                                 controller: listOfUnitControllers[index],
+                                mustBeNumber: true,
+                                maxLength: 4,
                               ),
                             ),
                             SizedBox(
@@ -473,6 +480,7 @@ class _FormPageState extends State<FormPage> {
                       hint: "${index + 1}",
                       inputBorder: UnderlineInputBorder(),
                       controller: listOfStepControllers[index],
+                      maxLength: 300,
                     );
                   },
                 ),
@@ -502,6 +510,7 @@ class _FormPageState extends State<FormPage> {
               hint: "Notes",
               inputBorder: OutlineInputBorder(),
               controller: _notesController,
+              maxLength: 400,
             ),
           ],
         ),

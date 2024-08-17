@@ -6,21 +6,38 @@ import 'package:flutter/material.dart';
 import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:cookingapp/ui/views/catagory_view.dart';
 import 'package:cookingapp/services/db_helper.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
+  String onLaunchNavigation = "onBoard";
+
   WidgetsFlutterBinding.ensureInitialized();
+  final prefs = await SharedPreferences.getInstance();
+  final isOnboardingComplete = prefs.getBool('isOnboardingComplete') ?? false;
 
   DbHelper db = DbHelper();
   await db.database;
 
-  runApp(const MyApp());
+  if (isOnboardingComplete == false){
+      final prefs = await SharedPreferences.getInstance();
+          await prefs.setBool('isOnboardingComplete', true);
+      onLaunchNavigation = "onBoard";
+    } else {
+      onLaunchNavigation = "home";
+    }
+
+  runApp(MyApp(defaultRoute: onLaunchNavigation,));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
-  
+
+  final String defaultRoute;
+
+  MyApp({super.key, required this.defaultRoute});
+
   @override
   Widget build(BuildContext context) {
+    
     return MaterialApp(
       title: "What's Cooking?",
       theme: ThemeData(
@@ -28,7 +45,7 @@ class MyApp extends StatelessWidget {
             ColorScheme.fromSeed(seedColor: Color.fromRGBO(103, 58, 183, 1)),
         useMaterial3: true,
       ),
-      initialRoute: "home",
+      initialRoute: defaultRoute,
       onGenerateRoute: CookingRouter.generateRoute,
     );
   }

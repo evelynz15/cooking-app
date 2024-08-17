@@ -1,4 +1,6 @@
+import 'package:cookingapp/ui/views/onboard_screen.dart';
 import 'package:cookingapp/ui/views/recipe_stepper/recipe_stepper_view.dart';
+import 'package:cookingapp/ui/views/setting_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:cookingapp/ui/views/catagory_view.dart';
@@ -28,6 +30,10 @@ class CookingRouter {
       case 'editRecipe':
         final Map<String, dynamic> arguments = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (_) => EditRecipePage(recipeId: arguments["recipeId"], catagoryId: arguments['catagoryId'],));
+      case 'onBoard':
+        return MaterialPageRoute(builder: (_) => OnboardScreen());
+      case 'settings':
+        return MaterialPageRoute(builder: (_) => SettingView());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

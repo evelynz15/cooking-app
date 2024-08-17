@@ -1,12 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 class CustomInput extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final String? hint;
   final InputBorder? inputBorder;
   final TextEditingController? controller;
+  final bool? mustBeNumber;
+  final int? maxLength;
   const CustomInput(
-      {Key? key, this.onChanged, this.hint, this.inputBorder, this.controller})
+      {Key? key,
+      this.onChanged,
+      this.hint,
+      this.inputBorder,
+      this.controller,
+      this.mustBeNumber, 
+      this.maxLength})
       : super(key: key);
 
   @override
@@ -15,13 +24,24 @@ class CustomInput extends StatelessWidget {
       margin: const EdgeInsets.only(bottom: 10),
       child: TextFormField(
         controller: controller,
-        onChanged: onChanged != null ?(v) => onChanged!(v) : null,
+        maxLength: maxLength,
+        maxLines: null,
+        onChanged: onChanged != null ? (v) => onChanged!(v) : null,
         decoration: InputDecoration(labelText: hint!, border: inputBorder),
         validator: (String? value) {
-          if (value == null || value.isEmpty) {
-            return 'Please enter some text';
+          if (mustBeNumber == true) {
+            if (value == null || value.isEmpty || value.isNum != true) {
+              return 'Please enter a number';
+            } else {
+              return null;
+            }
+          } else {
+            if (value == null || value.isEmpty) {
+              return 'Please enter some text';
+            } else {
+              return null;
+            }
           }
-          return null;
         },
       ),
     );
