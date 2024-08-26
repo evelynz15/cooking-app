@@ -6,22 +6,18 @@ import 'dart:developer';
 
 final List<OnBoard> demoData = [
   OnBoard(
-    image:
-        "https://www.southernliving.com/thmb/-_Rri5vav4ttiNj2arDaRNzvG-g=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/27496_MkitEasy_DIGI_44_preview_scale_100_ppi_150_quality_100-cc4c5cc90b124650806f5baa603a4d42.jpg",
+    image: "assets/images/backup-screenshot.png",
     title: "6 Different Recipe Catagories to Choose From",
-    description:
-        "Add your own recipes to each using the + button",
+    description: "Add your own recipes to each using the + button",
   ),
   OnBoard(
-    image:
-        "https://www.southernliving.com/thmb/-_Rri5vav4ttiNj2arDaRNzvG-g=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/27496_MkitEasy_DIGI_44_preview_scale_100_ppi_150_quality_100-cc4c5cc90b124650806f5baa603a4d42.jpg",
+    image: "assets/images/finished-recipe-top.jpg",
+    secondImage: "assets/images/finished-recipe-buttons.jpg",
     title: "Change Your Recipes as You Refine Them",
-    description:
-        "Easily update and delete individual recipes",
+    description: "Easily update and delete individual recipes",
   ),
   OnBoard(
-    image:
-        "https://www.southernliving.com/thmb/-_Rri5vav4ttiNj2arDaRNzvG-g=/1500x0/filters:no_upscale():max_bytes(150000):strip_icc()/27496_MkitEasy_DIGI_44_preview_scale_100_ppi_150_quality_100-cc4c5cc90b124650806f5baa603a4d42.jpg",
+    image: "assets/images/backup-screenshot.png",
     title: "Backup Your Data to Save it From Crashes",
     description:
         "Use the backup and restore options in settings to prevent the loss of your recipes",
@@ -73,7 +69,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
   }
 
   void onForwardButtonPressed() {
-    setState((){
+    setState(() {
       if (_pageIndex < 2) {
         _pageIndex++;
       } else {
@@ -89,7 +85,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
   }
 
   void onBackButtonPressed() {
-    setState((){
+    setState(() {
       if (_pageIndex > 0) {
         _pageIndex--;
       } else {
@@ -138,7 +134,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
                     children: [
                       IconButton(
                         icon: Icon(Icons.arrow_back_ios),
-                        onPressed: (){
+                        onPressed: () {
                           onBackButtonPressed();
                         },
                       ),
@@ -153,7 +149,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
                       ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward_ios),
-                        onPressed: (){
+                        onPressed: () {
                           onForwardButtonPressed();
                         },
                       )
@@ -196,8 +192,10 @@ class _OnboardScreenState extends State<OnboardScreen> {
 
 class OnBoard extends StatelessWidget {
   final String image, title, description;
+  final String? secondImage;
   const OnBoard({
     required this.image,
+    this.secondImage,
     required this.title,
     required this.description,
   });
@@ -211,7 +209,7 @@ class OnBoard extends StatelessWidget {
           title,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 20,
             fontWeight: FontWeight.bold,
           ),
@@ -223,13 +221,21 @@ class OnBoard extends StatelessWidget {
           description,
           textAlign: TextAlign.center,
           style: const TextStyle(
-            color: Colors.white,
+            color: Colors.black,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),
         ),
         const Spacer(),
-        Image.network(image),
+        Container(
+          child: secondImage != null
+              ? Column(
+                  children: [Image.asset(image), Image.asset(secondImage!)],
+                )
+              : Image.asset(image),
+          decoration:
+              BoxDecoration(border: Border.all(width: 5, color: Colors.white)),
+        ),
         const Spacer(),
       ],
     );

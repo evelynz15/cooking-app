@@ -90,6 +90,22 @@ class _EditFormPageState extends State<EditFormPage> {
     });
   }
 
+  void deleteIngredient(int index) {
+    setState((){
+      listOfIngredientControllers.removeAt(index);
+      listOfUnitControllers.removeAt(index);
+      selectedUnit.remove(index);
+      selectedIngredientList!.removeAt(index);
+    });
+  }
+
+  void deleteStep(int index) {
+    setState(() {
+      listOfStepControllers.removeAt(index);
+      selectedStepList!.removeAt(index);
+    });
+  }
+
   Future<Recipe> getRecipe() async {
     documentDirectory = await getApplicationDocumentsDirectory();
     return await Recipe.getRecipeById(widget.recipeId);
@@ -291,66 +307,95 @@ class _EditFormPageState extends State<EditFormPage> {
                     child: Column(
                       children: [
                         SizedBox(
-                          height: 150,
-                          child: ListView.builder(
-                            padding: EdgeInsets.all(16.0),
-                            itemCount: listOfIngredientControllers.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceBetween,
-                                children: [
-                                  SizedBox(
-                                    width: 150,
-                                    child: CustomInput(
-                                      hint: "${index + 1}",
-                                      inputBorder: UnderlineInputBorder(),
-                                      controller:
-                                          listOfIngredientControllers[index],
-                                      maxLength: 40,
-                                    ),
-                                  ),
-                                  Row(
+                          child: ListView(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.all(16.0),
+                              children: List.generate(
+                                listOfIngredientControllers.length,
+                                (index) {
+                                  return Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
-                                      SizedBox(
-                                        width: 50,
-                                        child: CustomInput(
-                                          hint: "Amount",
-                                          inputBorder: UnderlineInputBorder(),
-                                          controller:
-                                              listOfUnitControllers[index],
-                                          maxLength: 4,
-                                          mustBeNumber: true,
-                                        ),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          SizedBox(
+                                            width: 150,
+                                            child: CustomInput(
+                                              hint: "${index + 1}",
+                                              inputBorder:
+                                                  UnderlineInputBorder(),
+                                              controller:
+                                                  listOfIngredientControllers[
+                                                      index],
+                                              maxLength: 40,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              SizedBox(
+                                                width: 50,
+                                                child: CustomInput(
+                                                  hint: "Amount",
+                                                  inputBorder:
+                                                      UnderlineInputBorder(),
+                                                  controller:
+                                                      listOfUnitControllers[
+                                                          index],
+                                                  maxLength: 4,
+                                                  mustBeNumber: true,
+                                                ),
+                                              ),
+                                              SizedBox(
+                                                width: 70,
+                                                child: DropdownButton<String>(
+                                                  value:
+                                                      selectedIngredientList![
+                                                              index]
+                                                          .unit,
+                                                  hint: Text('Unit'),
+                                                  onChanged:
+                                                      (String? newValue) {
+                                                    setState(() {
+                                                      selectedIngredientList![
+                                                                  index]
+                                                              .unit =
+                                                          newValue ?? '';
+                                                    });
+                                                  },
+                                                  items: units.map<
+                                                          DropdownMenuItem<
+                                                              String>>(
+                                                      (String value) {
+                                                    return DropdownMenuItem<
+                                                        String>(
+                                                      value: value,
+                                                      child: Text(value),
+                                                    );
+                                                  }).toList(),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
                                       ),
                                       SizedBox(
-                                        width: 70,
-                                        child: DropdownButton<String>(
-                                          value: selectedIngredientList![index]
-                                              .unit,
-                                          hint: Text('Unit'),
-                                          onChanged: (String? newValue) {
-                                            setState(() {
-                                              selectedIngredientList![index]
-                                                  .unit = newValue ?? '';
-                                            });
-                                          },
-                                          items: units
-                                              .map<DropdownMenuItem<String>>(
-                                                  (String value) {
-                                            return DropdownMenuItem<String>(
-                                              value: value,
-                                              child: Text(value),
-                                            );
-                                          }).toList(),
-                                        ),
-                                      ),
+                                          height: 30,
+                                          width: 85,
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              deleteIngredient(index);
+                                            },
+                                            child: Text("Delete",
+                                                style: TextStyle(fontSize: 11)),
+                                          ))
                                     ],
-                                  ),
-                                ],
-                              );
-                            },
-                          ),
+                                  );
+                                },
+                              )),
                         ),
                         SizedBox(
                           height: 20,
@@ -377,19 +422,35 @@ class _EditFormPageState extends State<EditFormPage> {
                     child: Column(
                       children: [
                         SizedBox(
-                          height: 150,
-                          child: ListView.builder(
-                            padding: EdgeInsets.all(16.0),
-                            itemCount: listOfStepControllers.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return CustomInput(
-                                hint: "${index + 1}",
-                                inputBorder: UnderlineInputBorder(),
-                                controller: listOfStepControllers[index],
-                                maxLength: 300,
-                              );
-                            },
-                          ),
+                          child: ListView(
+                              shrinkWrap: true,
+                              physics: NeverScrollableScrollPhysics(),
+                              padding: EdgeInsets.all(16.0),
+                              children: List.generate(
+                                listOfStepControllers.length,
+                                (int index) {
+                                  return Column(
+                                    children: [
+                                      CustomInput(
+                                        hint: "${index + 1}",
+                                        inputBorder: UnderlineInputBorder(),
+                                        controller: listOfStepControllers[index],
+                                        maxLength: 300,
+                                      ),
+                                      SizedBox(
+                                          height: 30,
+                                          width: 85,
+                                          child: OutlinedButton(
+                                            onPressed: () {
+                                              deleteStep(index);
+                                            },
+                                            child: Text("Delete",
+                                                style: TextStyle(fontSize: 11)),
+                                          ))
+                                    ],
+                                  );
+                                },
+                              )),
                         ),
                         SizedBox(
                           height: 20,
@@ -457,14 +518,15 @@ class _EditFormPageState extends State<EditFormPage> {
                 onStepContinue: () async {
                   bool isLastStep = (currentStep == getSteps().length - 1);
                   if (isLastStep) {
+                    await Ingredient.deleteIngredientsByRecipeId(widget.recipeId);
                     List<Ingredient> ingredientItems = [];
                     for (int i = 0;
                         i < listOfIngredientControllers.length;
                         i++) {
                       Ingredient ingredient = Ingredient(
-                          id: selectedIngredientList![i].id != null
+                          /*id: selectedIngredientList![i].id != null
                               ? recipeSnap.data!.ingredientList![i].id
-                              : null,
+                              : null,*/
                           recipeId: widget.recipeId!,
                           ingredientName: listOfIngredientControllers[i].text,
                           amount: double.parse(listOfUnitControllers[i].text),
@@ -472,13 +534,14 @@ class _EditFormPageState extends State<EditFormPage> {
                           sequence: i + 1);
                       ingredientItems.add(ingredient);
                     }
-
+                    
+                    await recipeStep.deleteStepsByRecipeId(widget.recipeId);
                     List<recipeStep> stepItems = [];
                     for (int i = 0; i < listOfStepControllers.length; i++) {
                       recipeStep step = recipeStep(
-                        id: selectedStepList![i].id != null
+                        /*id: selectedStepList![i].id != null
                             ? recipeSnap.data!.stepList![i].id
-                            : null,
+                            : null,*/
                         recipeId: widget.recipeId!,
                         sequence: i + 1,
                         description: listOfStepControllers[i].text,
@@ -490,7 +553,7 @@ class _EditFormPageState extends State<EditFormPage> {
                       id: widget.recipeId,
                       name: _recipeController!.text,
                       yieldValue: _yieldController!.text,
-                      time: int.parse(_timeController!.text),
+                      time: double.parse(_timeController!.text),
                       timeUnit: selectedTime!,
                       imageName: _imageName != null
                           ? path.extension(_imageName!)
@@ -578,16 +641,21 @@ class _EditFormPageState extends State<EditFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Edit Recipe",
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Edit Recipe",
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: Container(
-        padding: const EdgeInsets.all(20),
-        child: editRecipeWidget(),
+        body: SingleChildScrollView(
+          child: Container(
+            padding: const EdgeInsets.all(20),
+            child: editRecipeWidget(),
+          ),
+        ),
       ),
     );
   }

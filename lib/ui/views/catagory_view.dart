@@ -20,27 +20,32 @@ class CatagoryPage extends StatefulWidget {
 }
 
 class _CatagoryPageState extends State<CatagoryPage> {
-  int _selectedIndex = 1;
+  //int _selectedIndex = 1;
   Directory? documentDirectory;
+  late String catagoryImage;
+  String coverIcon = "assets/images/cover-icon.PNG";
+
+  @override
+  void initState() {
+    super.initState();
+    switch (widget.catagoryId) {
+      case 0:
+        catagoryImage = "assets/images/appetizers-icon.PNG";
+      case 1:
+        catagoryImage = "assets/images/entrees-icon.PNG";
+      case 2:
+        catagoryImage = "assets/images/dessert-icon.PNG";
+      case 3:
+        catagoryImage = "assets/images/breakfast-icon.PNG";
+      case 4:
+        catagoryImage = "assets/images/lunch-icon.PNG";
+      case 5:
+        catagoryImage = "assets/images/others-icon.PNG";
+    }
+  }
 
   Future<List<Recipe>> getAllRecipes() async {
     documentDirectory = await getApplicationDocumentsDirectory();
-
-    String? catagoryName;
-    switch (widget.catagoryId) {
-      case 0:
-        catagoryName = "APPETIZERS";
-      case 1:
-        catagoryName = "ENTREES";
-      case 2:
-        catagoryName = "DESSERTS";
-      case 3:
-        catagoryName = "LUNCH";
-      case 4:
-        catagoryName = "BREAKFAST";
-      case 5:
-        catagoryName = "OTHER";
-    }
 
     DbHelper db = DbHelper();
     List<Map<String, Object?>> listOfRecipes =
@@ -50,7 +55,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
             'id': id as int,
             'name': name as String,
             'yield': yieldValue as String,
-            'time': time as int,
+            'time': time as double,
             'time_unit': timeUnit as String,
             'image': imageName as String?,
             'catagory_id': catagoryId as int,
@@ -72,10 +77,6 @@ class _CatagoryPageState extends State<CatagoryPage> {
   Widget recipeListWidget() {
     return FutureBuilder(
       builder: (context, recipeSnap) {
-        double screenWidth = MediaQuery.of(context).size.width;
-        double screenHeight = MediaQuery.of(context).size.height;
-        var size = MediaQuery.of(context).size;
-
         if (recipeSnap.data == null ||
             recipeSnap.connectionState == ConnectionState.none &&
                 !recipeSnap.hasData) {
@@ -101,7 +102,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                     color: Theme.of(context).colorScheme.inversePrimary,
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 20.0, horizontal: 2),
+                          vertical: 10.0, horizontal: 2),
                       child: Column(
                         children: [
                           InkWell(
@@ -120,20 +121,20 @@ class _CatagoryPageState extends State<CatagoryPage> {
                                 children: [
                                   Center(
                                       child: Column(
-                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceEvenly,
                                     crossAxisAlignment:
                                         CrossAxisAlignment.center,
                                     children: [
                                       recipe.imageName != null
                                           ? Image.file(
                                               recipeImg,
-                                              height: 90,
+                                              height: 100,
                                               key: UniqueKey(),
                                             )
                                           : SizedBox(
-                                              child: Image.network(
-                                                  'https://flutter.github.io/assets-for-api-docs/assets/widgets/owl.jpg'),
-                                              height: 80,
+                                              child: Image.asset(coverIcon),
+                                              height: 110,
                                             ),
                                       Text(recipe.name.capitalize(),
                                           style: TextStyle(fontSize: 20)),
@@ -141,25 +142,6 @@ class _CatagoryPageState extends State<CatagoryPage> {
                                   )),
                                 ]),
                           ),
-                          Expanded(
-                              child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              IconButton(
-                                icon: Icon(Icons.delete, size: 25),
-                                onPressed: () {
-                                  setState(() {
-                                    recipe.deleteRecipeInfo(recipe.id);
-                                    if (recipe.imageName != null) {
-                                      recipeImg.delete();
-                                    } else {}
-                                  });
-                                },
-                                tooltip: "Delete recipe",
-                                color: Colors.white,
-                              )
-                            ],
-                          ))
                         ],
                       ),
                     ),

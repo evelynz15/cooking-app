@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:flutter/services.dart';
 
 class CustomInput extends StatelessWidget {
   final ValueChanged<String>? onChanged;
@@ -14,7 +15,7 @@ class CustomInput extends StatelessWidget {
       this.hint,
       this.inputBorder,
       this.controller,
-      this.mustBeNumber, 
+      this.mustBeNumber,
       this.maxLength})
       : super(key: key);
 
@@ -26,6 +27,14 @@ class CustomInput extends StatelessWidget {
         controller: controller,
         maxLength: maxLength,
         maxLines: null,
+        keyboardType: mustBeNumber == true
+            ? TextInputType.numberWithOptions(decimal: true)
+            : null,
+        inputFormatters: [
+          mustBeNumber == true
+              ? FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d*$'))
+              : FilteringTextInputFormatter.deny(RegExp(r'')),
+        ],
         onChanged: onChanged != null ? (v) => onChanged!(v) : null,
         decoration: InputDecoration(labelText: hint!, border: inputBorder),
         validator: (String? value) {

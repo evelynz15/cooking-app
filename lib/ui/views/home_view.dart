@@ -54,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
             'id': id as int,
             'name': name as String,
             'yield': yieldValue as String,
-            'time': time as int,
+            'time': time as double,
             'time_unit': timeUnit as String,
             'image': imageName as String?,
             'catagory_id': catagoryId as int,
@@ -294,13 +294,16 @@ class _MyHomePageState extends State<MyHomePage> {
               Padding(
                   padding: EdgeInsets.all(20.0),
                   child: Center(
-                    child: Text(
-                      catagoryName,
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 40, // Adjust size as needed
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
+                    child: FittedBox(
+                      fit: BoxFit.contain,
+                      child: Text(
+                        catagoryName,
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 40, // Adjust size as needed
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   )),

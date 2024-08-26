@@ -40,7 +40,7 @@ class DbHelper {
   "id" INTEGER, 
   "name" TEXT NOT NULL, 
   "yield" TEXT, 
-  "time" INTEGER,
+  "time" REAL,
   "time_unit"	TEXT,
   "image"	TEXT,
   "catagory_id"	INTEGER NOT NULL,
@@ -75,7 +75,7 @@ class DbHelper {
   Future<void> _onUpgradeDb(
       Database db, int oldVersion, int newVersion) async {}
 
-  Future<int> insertRecipe(String name, String yieldValue, int time,
+  Future<int> insertRecipe(String name, String yieldValue, double time,
       String timeUnit, String? imageName, int catagoryId, String? notes) async {
     Map<String, Object?> recipeMap = {
       'name': name,
@@ -235,6 +235,19 @@ class DbHelper {
     }
   }
 
+  Future<int> deleteIngredientsByRecipeId(int id) async {
+    try {
+      return await _database!.delete(
+        'recipe_ingredient',
+        where: 'recipe_id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      log('deleteIngredientsByRecipeId - Error: $e');
+      return 0;
+    }
+  }
+
   Future<int> deleteSteps(int id) async {
     try {
       return await _database!.delete(
@@ -244,6 +257,19 @@ class DbHelper {
       );
     } catch (e) {
       log('deleteSteps - Error: $e');
+      return 0;
+    }
+  }
+
+  Future<int> deleteStepsByRecipeId(int id) async {
+    try {
+      return await _database!.delete(
+        'recipe_step',
+        where: 'recipe_id = ?',
+        whereArgs: [id],
+      );
+    } catch (e) {
+      log('deleteStepsByRecipeId - Error: $e');
       return 0;
     }
   }
@@ -349,5 +375,12 @@ class DbHelper {
     } catch (e) {
       log('updateRecipeInfo - Error: $e');
     }
+  }
+
+  Future<void> resetDatabase() async {
+    await deleteDatabase(DbHelper.dbPath);
+    _database = null;
+    await database;
+    return;
   }
 }

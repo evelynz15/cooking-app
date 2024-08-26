@@ -448,7 +448,7 @@ class _EditRecipePageState extends State<EditRecipePage> {
                                   id: widget.recipeId,
                                   name: _recipeController!.text,
                                   yieldValue: _yieldController1!.text,
-                                  time: int.parse(_timeController2!.text),
+                                  time: double.parse(_timeController2!.text),
                                   timeUnit: selectedTime!,
                                   catagoryId: recipeSnap.data!.catagoryId,
                                   imageName: _imageName != null

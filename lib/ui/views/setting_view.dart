@@ -58,14 +58,18 @@ class _SettingViewState extends State<SettingView> {
     //   "Back to settings.");
   }
 
-  /*Future<void> onDeleteButtonPressed() async {
+  Future<void> onDeleteButtonPressed() async {
       DbHelper dbClient = DbHelper();
       await dbClient.resetDatabase();
       if (context.mounted) {
         Navigator.of(context).pop();
-        displayDialog(context, "Data reset", "Back to settings.");
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(content: Text("Data reset"));
+          });
       }
-    }*/
+    }
 
   Future<void> onContinueDataRestorePressed(result) async {
     File source = File(result.files.single.path!);
@@ -253,26 +257,53 @@ class _SettingViewState extends State<SettingView> {
                   title: const Text('Reset all the settings to default'),
                   leading: const Icon(Icons.reset_tv, color: Colors.green),
                   onPressed: (BuildContext context) {
-                    /*showConfirmationDialog(
-                                context,
-                                "Data Reset",
-                                "All the data you have entered or collected in this app will be deleted, and the app will be restored to initial setup. Are you sure you want to reset the data to its initial setup?",
-                                onCancelPressed,
-                                onDeleteButtonPressed);*/
-                  },
-                ),
-                SettingsTile(
-                  title: const Text('Clear all the cache'),
-                  leading: const Icon(Icons.clear_all, color: Colors.green),
-                  onPressed: (BuildContext context) {
-                    /*showConfirmationDialog(
-                                context,
-                                "Clear Cache",
-                                "All the cache that stores your previous selections in this app will be deleted, "
-                                    "but all the Stats, Teams, Players and Games information you have entered will NOT be changed. "
-                                    "Do you want to continue?",
-                                onCancelPressed,
-                                onContinueButtonPressed);*/
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            scrollable: true,
+                            title: Text('Data Reset'),
+                            content: Container(
+                              child: Padding(
+                                padding: const EdgeInsets.all(12.0),
+                                child: Form(
+                                  child: Column(
+                                    children: <Widget>[
+                                      Align(
+                                        alignment: Alignment.topLeft,
+                                        child: Container(
+                                            height: 100,
+                                            child: Text(
+                                              "All the data you have entered or collected in this app will be deleted, and the app will be restored to initial setup. Are you sure you want to reset the data to its initial setup?"
+                                            )),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                            ),
+                            actions: [
+                              Row(
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceBetween,
+                                children: [
+                                  ElevatedButton(
+                                      child: Text("Cancel"),
+                                      onPressed: () {
+                                        Navigator.of(context).pop();
+                                      }),
+                                  ElevatedButton(
+                                      child: Text("Reset"),
+                                      onPressed: () {
+                                        setState(() {
+                                          onDeleteButtonPressed();
+                                        });
+                                      }),
+                                ],
+                              )
+                            ],
+                          );
+                        });
                   },
                 ),
               ],

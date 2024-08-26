@@ -417,7 +417,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                           Recipe recipe = Recipe(
                             name: _recipeController.text,
                             yieldValue: _yieldController1.text,
-                            time: int.parse(_timeController2.text),
+                            time: double.parse(_timeController2.text),
                             timeUnit: selectedTime!,
                             imageName: _imageName != null
                                 ? path.extension(_imageName!)

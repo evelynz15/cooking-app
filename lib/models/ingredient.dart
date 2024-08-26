@@ -60,6 +60,11 @@ class Ingredient {
     return await db.deleteIngredients(id);
   }
 
+  static Future<int> deleteIngredientsByRecipeId (id) async {
+    DbHelper db = DbHelper();
+    return await db.deleteIngredientsByRecipeId(id);
+  }
+
   Future<void> updateIngredients (Ingredient ingredient) async {
     DbHelper db = DbHelper();
     await db.updateIngredients(ingredient);

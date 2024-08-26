@@ -86,158 +86,183 @@ class _FormPageState extends State<FormPage> {
     });
   }
 
+  void deleteIngredient(int index) {
+    setState(() {
+      listOfIngredientControllers.removeAt(index);
+      listOfUnitControllers.removeAt(index);
+      selectedUnit.remove(index);
+    });
+  }
+
+  void deleteStep(int index) {
+    setState(() {
+      listOfStepControllers.removeAt(index);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          "Add New Recipe",
+    return GestureDetector(
+      onTap: () => FocusScope.of(context).unfocus(),
+      child: Scaffold(
+        appBar: AppBar(
+          title: const Text(
+            "Add New Recipe",
+          ),
+          centerTitle: true,
         ),
-        centerTitle: true,
-      ),
-      body: SingleChildScrollView(
-        child: Container(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              children: [
-                Stepper(
-                  type: StepperType.vertical,
-                  currentStep: currentStep,
-                  controlsBuilder:
-                      (BuildContext context, ControlsDetails details) {
-                    return Row(
-                      children: <Widget>[
-                        FilledButton(
-                          onPressed: details.onStepContinue,
-                          child: currentStep == 4 ? Text('Save') : Text('Next'),
-                        ),
-                        SizedBox(width: 50),
-                        FilledButton.tonal(
-                          onPressed: details.onStepCancel,
-                          child:
-                              currentStep == 0 ? Text('Cancel') : Text('Back'),
-                        ),
-                      ],
-                    );
-                  },
-                  onStepCancel: () => currentStep == 0
-                      ? Navigator.pushNamed(context, 'catagory',
-                          arguments: {"catagoryId": widget.catagoryId})
-                      : setState(() {
-                          currentStep -= 1;
-                        }),
-                  onStepContinue: () async {
-                    bool isLastStep = (currentStep == getSteps().length - 1);
-                    if (isLastStep) {
-                      Recipe recipe = Recipe(
-                        name: _recipeController.text,
-                        yieldValue: _yieldController.text,
-                        time: int.parse(_timeController.text),
-                        timeUnit: selectedTime!,
-                        imageName: _imageName != null
-                            ? path.extension(_imageName!)
-                            : null,
-                        notes: _notesController.text.isNotEmpty
-                            ? _notesController.text
-                            : null,
-                        catagoryId: widget.catagoryId!,
+        body: SingleChildScrollView(
+          child: Container(
+              padding: const EdgeInsets.all(20),
+              child: Column(
+                children: [
+                  Stepper(
+                    type: StepperType.vertical,
+                    currentStep: currentStep,
+                    controlsBuilder:
+                        (BuildContext context, ControlsDetails details) {
+                      return Row(
+                        children: <Widget>[
+                          FilledButton(
+                            onPressed: details.onStepContinue,
+                            child:
+                                currentStep == 4 ? Text('Save') : Text('Next'),
+                          ),
+                          SizedBox(width: 50),
+                          FilledButton.tonal(
+                            onPressed: details.onStepCancel,
+                            child: currentStep == 0
+                                ? Text('Cancel')
+                                : Text('Back'),
+                          ),
+                        ],
                       );
-
-                      int recipeId = await recipe.insertRecipe();
-                      log("test recipe id: $recipeId");
-
-                      List<int> ingredientIds = [];
-                      for (int i = 0;
-                          i < listOfIngredientControllers.length;
-                          i++) {
-                        Ingredient ingredient = Ingredient(
-                            recipeId: recipeId,
-                            ingredientName: listOfIngredientControllers[i].text,
-                            amount: double.parse(listOfUnitControllers[i].text),
-                            unit: selectedUnit[i]!,
-                            sequence: i + 1);
-                        ingredientIds.add(await ingredient.insertIngredient());
-                      }
-
-                      List<int> stepIds = [];
-                      for (int i = 0; i < listOfStepControllers.length; i++) {
-                        recipeStep step = recipeStep(
-                          recipeId: recipeId,
-                          sequence: i + 1,
-                          description: listOfStepControllers[i].text,
+                    },
+                    onStepCancel: () => currentStep == 0
+                        ? Navigator.pushNamed(context, 'catagory',
+                            arguments: {"catagoryId": widget.catagoryId})
+                        : setState(() {
+                            currentStep -= 1;
+                          }),
+                    onStepContinue: () async {
+                      bool isLastStep = (currentStep == getSteps().length - 1);
+                      if (isLastStep) {
+                        Recipe recipe = Recipe(
+                          name: _recipeController.text,
+                          yieldValue: _yieldController.text,
+                          time: double.parse(_timeController.text),
+                          timeUnit: selectedTime!,
+                          imageName: _imageName != null
+                              ? path.extension(_imageName!)
+                              : null,
+                          notes: _notesController.text.isNotEmpty
+                              ? _notesController.text
+                              : null,
+                          catagoryId: widget.catagoryId!,
                         );
-                        stepIds.add(await step.insertStep());
-                      }
 
-                      //var response = await http.get(Uri.parse(_image));
-                      if (_imageName != null) {
-                        Directory documentDirectory =
-                            await getApplicationDocumentsDirectory();
-                        String imgPath =
-                            path.join(documentDirectory.path, 'image');
-                        if (!await Directory(imgPath).exists()) {
-                          Directory imgDir = Directory(imgPath);
-                          await imgDir.create(recursive: true);
+                        int recipeId = await recipe.insertRecipe();
+                        log("test recipe id: $recipeId");
+
+                        List<int> ingredientIds = [];
+                        for (int i = 0;
+                            i < listOfIngredientControllers.length;
+                            i++) {
+                          Ingredient ingredient = Ingredient(
+                              recipeId: recipeId,
+                              ingredientName:
+                                  listOfIngredientControllers[i].text,
+                              amount:
+                                  double.parse(listOfUnitControllers[i].text),
+                              unit: selectedUnit[i]!,
+                              sequence: i + 1);
+                          ingredientIds
+                              .add(await ingredient.insertIngredient());
                         }
 
-                        String newImgName =
-                            recipeId.toString() + path.extension(_imageName!);
+                        List<int> stepIds = [];
+                        for (int i = 0; i < listOfStepControllers.length; i++) {
+                          recipeStep step = recipeStep(
+                            recipeId: recipeId,
+                            sequence: i + 1,
+                            description: listOfStepControllers[i].text,
+                          );
+                          stepIds.add(await step.insertStep());
+                        }
 
-                        imgPath = path.join(imgPath, newImgName);
-                        File imgFile = File(imgPath);
-                        try {
-                          if (await imgFile.exists()) {
-                            // If the file exists, delete it before writing the new data
-                            await imgFile.delete();
+                        //var response = await http.get(Uri.parse(_image));
+                        if (_imageName != null) {
+                          Directory documentDirectory =
+                              await getApplicationDocumentsDirectory();
+                          String imgPath =
+                              path.join(documentDirectory.path, 'image');
+                          if (!await Directory(imgPath).exists()) {
+                            Directory imgDir = Directory(imgPath);
+                            await imgDir.create(recursive: true);
                           }
 
-                          await _image!.copy(imgPath);
+                          String newImgName =
+                              recipeId.toString() + path.extension(_imageName!);
 
-                          //await imgFile.writeAsBytes(bytes, flush: true);
-                          log('Image saved to: $imgPath');
-                        } catch (e) {
-                          log('Error saving image: $e');
-                        }
-                      } else {}
+                          imgPath = path.join(imgPath, newImgName);
+                          File imgFile = File(imgPath);
+                          try {
+                            if (await imgFile.exists()) {
+                              // If the file exists, delete it before writing the new data
+                              await imgFile.delete();
+                            }
 
-                      // await _image.writeAsBytes(response.bodyBytes);
+                            await _image!.copy(imgPath);
 
-                      setState(() {
-                        Navigator.pushNamed(context, 'finalRecipe', arguments: {
-                          'recipeId': recipeId,
-                          "catagoryId": widget.catagoryId
+                            //await imgFile.writeAsBytes(bytes, flush: true);
+                            log('Image saved to: $imgPath');
+                          } catch (e) {
+                            log('Error saving image: $e');
+                          }
+                        } else {}
+
+                        // await _image.writeAsBytes(response.bodyBytes);
+
+                        setState(() {
+                          Navigator.pushNamed(context, 'finalRecipe',
+                              arguments: {
+                                'recipeId': recipeId,
+                                "catagoryId": widget.catagoryId
+                              });
                         });
-                      });
-                    } else {
-                      setState(() {
-                        if (currentStep != 1) {
-                          if (_formKeys[currentStep].currentState!.validate()) {
+                      } else {
+                        setState(() {
+                          if (currentStep != 1) {
+                            if (_formKeys[currentStep]
+                                .currentState!
+                                .validate()) {
+                              currentStep++;
+                            }
+                          } else {
                             currentStep++;
                           }
-                        } else {
-                          currentStep++;
-                        }
-                      });
-                    }
-                  },
-                  /*onStepTapped: (step) => setState(() {
-                    currentStep = step;
-                  }),*/
-                  steps: getSteps(),
-                ),
-                /*CustomBtn(
-                  title: const Text(
-                    "Save",
-                    style: TextStyle(color: Colors.white),
+                        });
+                      }
+                    },
+                    /*onStepTapped: (step) => setState(() {
+                      currentStep = step;
+                    }),*/
+                    steps: getSteps(),
                   ),
-                  callback: () async {
-                    //if (_formKey.currentState!.validate()) {
-                    
-                    //}
-                  },
-                )*/
-              ],
-            )),
+                  /*CustomBtn(
+                    title: const Text(
+                      "Save",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    callback: () async {
+                      //if (_formKey.currentState!.validate()) {
+                      
+                      //}
+                    },
+                  )*/
+                ],
+              )),
+        ),
       ),
     );
   }
@@ -392,63 +417,85 @@ class _FormPageState extends State<FormPage> {
           child: Column(
             children: [
               SizedBox(
-                height: 150,
-                child: ListView.builder(
-                  padding: EdgeInsets.all(16.0),
-                  itemCount: _ingredients.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        SizedBox(
-                          width: 150,
-                          child: CustomInput(
-                            hint: "${index + 1}",
-                            inputBorder: UnderlineInputBorder(),
-                            controller: listOfIngredientControllers[index],
-                            maxLength: 40,
-                          ),
-                        ),
-                        Row(
+                //height: 150,
+                child: ListView(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(16.0),
+                    children: List.generate(
+                      listOfIngredientControllers.length,
+                      (index) {
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            SizedBox(
-                              width: 50,
-                              child: CustomInput(
-                                hint: "Amount",
-                                inputBorder: UnderlineInputBorder(),
-                                controller: listOfUnitControllers[index],
-                                mustBeNumber: true,
-                                maxLength: 4,
-                              ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                SizedBox(
+                                  width: 150,
+                                  child: CustomInput(
+                                    hint: "${index + 1}",
+                                    inputBorder: UnderlineInputBorder(),
+                                    controller:
+                                        listOfIngredientControllers[index],
+                                    maxLength: 40,
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    SizedBox(
+                                      width: 60,
+                                      child: CustomInput(
+                                        hint: "Amount",
+                                        inputBorder: UnderlineInputBorder(),
+                                        controller:
+                                            listOfUnitControllers[index],
+                                        mustBeNumber: true,
+                                        maxLength: 4,
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: 50,
+                                      child: DropdownButton<String>(
+                                        value: selectedUnit[index],
+                                        hint: Text('Unit'),
+                                        onChanged: (String? newValue) {
+                                          setState(() {
+                                            selectedUnit[index] =
+                                                newValue ?? '';
+                                          });
+                                        },
+                                        items: units
+                                            .map<DropdownMenuItem<String>>(
+                                                (String value) {
+                                          return DropdownMenuItem<String>(
+                                            value: value,
+                                            child: Text(value),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
                             ),
                             SizedBox(
-                              width: 70,
-                              child: DropdownButton<String>(
-                                value: selectedUnit[index],
-                                hint: Text('Unit'),
-                                onChanged: (String? newValue) {
-                                  setState(() {
-                                    selectedUnit[index] = newValue ?? '';
-                                  });
-                                },
-                                items: units.map<DropdownMenuItem<String>>(
-                                    (String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
-                              ),
-                            ),
+                              height: 30,
+                              width: 85,
+                              child: OutlinedButton(
+                                  onPressed: () {
+                                    deleteIngredient(index);
+                                  },
+                                  child: Text("Delete", style: TextStyle(fontSize: 11)),
+                              )
+                            )
                           ],
-                        ),
-                      ],
-                    );
-                  },
-                ),
+                        );
+                      },
+                    )),
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               SizedBox(
                 width: 70,
@@ -457,6 +504,9 @@ class _FormPageState extends State<FormPage> {
                   onPressed: addNewIngredient,
                   child: Icon(Icons.add),
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
             ],
           ),
@@ -471,22 +521,42 @@ class _FormPageState extends State<FormPage> {
           child: Column(
             children: [
               SizedBox(
-                height: 150,
-                child: ListView.builder(
-                  padding: EdgeInsets.all(16.0),
-                  itemCount: _steps.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return CustomInput(
-                      hint: "${index + 1}",
-                      inputBorder: UnderlineInputBorder(),
-                      controller: listOfStepControllers[index],
-                      maxLength: 300,
-                    );
-                  },
-                ),
+                //height: 150,
+                child: ListView(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    padding: EdgeInsets.all(16.0),
+                    children: List.generate(
+                      listOfStepControllers.length,
+                      (index) {
+                        return Column(
+                          children: [
+                            SizedBox(
+                              width: 300,
+                              child: CustomInput(
+                                hint: "${index + 1}",
+                                inputBorder: UnderlineInputBorder(),
+                                controller: listOfStepControllers[index],
+                                maxLength: 300,
+                              ),
+                            ),
+                            SizedBox(
+                              height: 30,
+                              width: 85,
+                              child: OutlinedButton(
+                                  onPressed: () {
+                                    deleteStep(index);
+                                  },
+                                  child: Text("Delete", style: TextStyle(fontSize: 11)),
+                              )
+                            )
+                          ],
+                        );
+                      },
+                    )),
               ),
               SizedBox(
-                height: 20,
+                height: 10,
               ),
               Container(
                 width: 70,
@@ -495,6 +565,9 @@ class _FormPageState extends State<FormPage> {
                   onPressed: addNewStep,
                   child: Icon(Icons.add),
                 ),
+              ),
+              SizedBox(
+                height: 10,
               ),
             ],
           ),

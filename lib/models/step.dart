@@ -51,6 +51,11 @@ class recipeStep {
     return await db.deleteSteps(id);
   }
 
+  static Future<int> deleteStepsByRecipeId (id) async {
+    DbHelper db = DbHelper();
+    return await db.deleteStepsByRecipeId(id);
+  }
+
   Future<void> updateSteps (recipeStep step) async {
     DbHelper db = DbHelper();
     await db.updateSteps(step);

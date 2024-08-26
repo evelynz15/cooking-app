@@ -6,7 +6,7 @@ class Recipe {
   int? id;
   final String name;
   final String yieldValue;
-  final int time;
+  final double time;
   final String timeUnit;
   final int catagoryId;
   String? imageName;
