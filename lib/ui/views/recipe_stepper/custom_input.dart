@@ -36,7 +36,11 @@ class CustomInput extends StatelessWidget {
               : FilteringTextInputFormatter.deny(RegExp(r'')),
         ],
         onChanged: onChanged != null ? (v) => onChanged!(v) : null,
-        decoration: InputDecoration(labelText: hint!, border: inputBorder),
+        decoration: InputDecoration(
+          labelText: hint!,
+          labelStyle: TextStyle(fontSize: 12), 
+          border: inputBorder
+          ),
         validator: (String? value) {
           if (mustBeNumber == true) {
             if (value == null || value.isEmpty || value.isNum != true) {

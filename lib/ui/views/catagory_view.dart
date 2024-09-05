@@ -23,24 +23,30 @@ class _CatagoryPageState extends State<CatagoryPage> {
   //int _selectedIndex = 1;
   Directory? documentDirectory;
   late String catagoryImage;
+  late String catagoryName;
   String coverIcon = "assets/images/cover-icon.PNG";
-
   @override
   void initState() {
     super.initState();
     switch (widget.catagoryId) {
       case 0:
         catagoryImage = "assets/images/appetizers-icon.PNG";
+        catagoryName = "APPETIZERS";
       case 1:
         catagoryImage = "assets/images/entrees-icon.PNG";
+        catagoryName = "ENTREES";
       case 2:
         catagoryImage = "assets/images/dessert-icon.PNG";
+        catagoryName = "DESSERTS";
       case 3:
         catagoryImage = "assets/images/breakfast-icon.PNG";
+        catagoryName = "BREAKFAST";
       case 4:
         catagoryImage = "assets/images/lunch-icon.PNG";
+        catagoryName = "LUNCH";
       case 5:
         catagoryImage = "assets/images/others-icon.PNG";
+        catagoryName = "OTHERS";
     }
   }
 
@@ -83,71 +89,127 @@ class _CatagoryPageState extends State<CatagoryPage> {
           //print('project snapshot data is: ${projectSnap.data}');
           return const Center(child: CircularProgressIndicator());
         } else {
-          return GridView.count(
-              crossAxisCount:
-                  MediaQuery.of(context).size.shortestSide < 600 ? 1 : 2,
-              childAspectRatio: (2 / 1),
-              children: List.generate(recipeSnap.data!.length, (index) {
-                Recipe recipe = recipeSnap.data![index];
-                File recipeImg = File(path.join(documentDirectory!.path,
-                        'image', recipe.id.toString()) +
-                    recipe.imageName.toString());
-                log('image location - ' + recipeImg.path);
+          return OrientationBuilder(builder: (context, orientation) {
+            return GridView.count(
+                crossAxisCount:
+                    MediaQuery.of(context).size.shortestSide < 600 &&
+                            orientation == Orientation.portrait
+                        ? 1
+                        : 2,
+                childAspectRatio: (2 / 1),
+                children: List.generate(recipeSnap.data!.length, (index) {
+                  Recipe recipe = recipeSnap.data![index];
+                  File recipeImg = File(path.join(documentDirectory!.path,
+                          'image', recipe.id.toString()) +
+                      recipe.imageName.toString());
+                  log('image location - ' + recipeImg.path);
 
-                return Container(
-                  margin: EdgeInsets.symmetric(horizontal: 50),
-                  //height: 100,
-                  //width: 180,
-                  child: Card(
-                    color: Theme.of(context).colorScheme.inversePrimary,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 10.0, horizontal: 2),
-                      child: Column(
-                        children: [
-                          InkWell(
-                            onTap: () {
-                              setState(() {
-                                Navigator.pushNamed(context, 'finalRecipe',
-                                    arguments: {
-                                      'recipeId': recipe.id,
-                                      'catagoryId': widget.catagoryId
-                                    });
+                  return Container(
+                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    //height: 250,
+                    child: InkWell(
+                      splashColor: Colors.blue.withAlpha(30),
+                      onTap: () {
+                        setState(() {
+                          Navigator.pushNamed(context, 'finalRecipe',
+                              arguments: {
+                                'recipeId': recipe.id,
+                                'catagoryId': widget.catagoryId
                               });
-                            },
-                            child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
-                                children: [
-                                  Center(
-                                      child: Column(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.center,
-                                    children: [
-                                      recipe.imageName != null
-                                          ? Image.file(
-                                              recipeImg,
-                                              height: 100,
-                                              key: UniqueKey(),
-                                            )
-                                          : SizedBox(
-                                              child: Image.asset(coverIcon),
-                                              height: 110,
-                                            ),
-                                      Text(recipe.name.capitalize(),
-                                          style: TextStyle(fontSize: 20)),
-                                    ],
-                                  )),
-                                ]),
+                        });
+                      },
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        crossAxisAlignment: CrossAxisAlignment.center,
+                        children: [
+                          Expanded(
+                              //flex: 1,
+                              child: Card(
+                            color: Theme.of(context).colorScheme.inversePrimary,
+                            child: Stack(children: [
+                              Positioned.fill(
+                                child: recipe.imageName != null
+                                    ? ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(8.0),
+                                        child: Image.file(
+                                          recipeImg,
+                                          width: 170,
+                                          key: UniqueKey(),
+                                          fit: BoxFit.cover,
+                                        ),
+                                      )
+                                    : SizedBox(
+                                        child: Image.asset(coverIcon),
+                                        width: 170,
+                                      ),
+                              ),
+                            ]),
+                          )),
+                          Text(
+                            recipe.name.capitalize(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 20, // Adjust size as needed
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
                           ),
                         ],
                       ),
                     ),
-                  ),
-                );
-              }));
+                  );
+                  /*Card(
+                        color: Theme.of(context).colorScheme.inversePrimary,
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10.0, horizontal: 2),
+                          child: Column(
+                            children: [
+                              InkWell(
+                                onTap: () {
+                                  setState(() {
+                                    Navigator.pushNamed(context, 'finalRecipe',
+                                        arguments: {
+                                          'recipeId': recipe.id,
+                                          'catagoryId': widget.catagoryId
+                                        });
+                                  });
+                                },
+                                child: Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment: CrossAxisAlignment.center,
+                                    children: [
+                                      Center(
+                                          child: Column(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceEvenly,
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.center,
+                                        children: [
+                                          recipe.imageName != null
+                                              ? Image.file(
+                                                  recipeImg,
+                                                  height: 100,
+                                                  key: UniqueKey(),
+                                                )
+                                              : SizedBox(
+                                                  child: Image.asset(coverIcon),
+                                                  height: 110,
+                                                ),
+                                          Text(recipe.name.capitalize(),
+                                              style: TextStyle(fontSize: 20)),
+                                        ],
+                                      )),
+                                    ]),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                        );*/
+                }));
+          });
         }
       },
       future: getAllRecipes(),
@@ -156,20 +218,71 @@ class _CatagoryPageState extends State<CatagoryPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SafeArea(
-        child: Row(
-          children: [
-            VerticalNavBar(catagoryId: widget.catagoryId),
-            Expanded(
-              child: Center(
-                child: recipeListWidget(),
+    return OrientationBuilder(builder: (context, orientation) {
+      return orientation == Orientation.portrait
+          ? Scaffold(
+              body: SafeArea(
+                child: Row(
+                  children: [
+                    VerticalNavBar(catagoryId: widget.catagoryId),
+                    Expanded(
+                      child: Center(
+                        child: recipeListWidget(),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
-        ),
-      ),
-    );
+            )
+          : Scaffold(
+              appBar: AppBar(
+                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                  leading: IconButton(
+                    icon: const Icon(
+                      Icons.home,
+                      size: 50,
+                      color: Colors.white,
+                    ),
+                    onPressed: () {
+                      Navigator.pushNamed(context, 'home');
+                    },
+                  ),
+                  title: Text(
+                    catagoryName,
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      fontSize: 50, // Adjust size as needed
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                      letterSpacing: 10.0,
+                    ),
+                  ),
+                  actions: <Widget>[
+                    RawMaterialButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, 'addRecipe',
+                            arguments: {"catagoryId": widget.catagoryId});
+                      },
+                      elevation: 0,
+                      fillColor: Colors.white,
+                      shape: CircleBorder(),
+                      child: Padding(
+                        padding: EdgeInsets.all(24),
+                        child: Icon(
+                          Icons.add,
+                          color: Colors.black,
+                          size: 20,
+                        ),
+                      ),
+                    ),
+                  ]),
+              body: SafeArea(
+                child: Center(
+                  child: recipeListWidget(),
+                ),
+              ),
+            );
+    });
   }
 }
 

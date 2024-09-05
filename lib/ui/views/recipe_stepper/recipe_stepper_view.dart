@@ -62,6 +62,7 @@ class _FormPageState extends State<FormPage> {
   ];
 
   final List<String> units = ["Tsp", "Tbsp", "Cup", "n/a"];
+
   Map<int, String> selectedUnit = {};
 
   final List<String> timeUnits = ["Hour(s)", "Minutes"];
@@ -112,156 +113,153 @@ class _FormPageState extends State<FormPage> {
           centerTitle: true,
         ),
         body: SingleChildScrollView(
-          child: Container(
-              padding: const EdgeInsets.all(20),
-              child: Column(
-                children: [
-                  Stepper(
-                    type: StepperType.vertical,
-                    currentStep: currentStep,
-                    controlsBuilder:
-                        (BuildContext context, ControlsDetails details) {
-                      return Row(
-                        children: <Widget>[
-                          FilledButton(
-                            onPressed: details.onStepContinue,
-                            child:
-                                currentStep == 4 ? Text('Save') : Text('Next'),
-                          ),
-                          SizedBox(width: 50),
-                          FilledButton.tonal(
-                            onPressed: details.onStepCancel,
-                            child: currentStep == 0
-                                ? Text('Cancel')
-                                : Text('Back'),
-                          ),
-                        ],
+          child: Builder(builder: (context) {
+            final orientation = MediaQuery.of(context).orientation;
+            double screenHeight = MediaQuery.of(context).size.height;
+            //log('vertical orientation? ${orientation== Orientation.portrait}');
+            return Container(
+              padding: const EdgeInsets.all(5),
+              height: orientation == Orientation.portrait ? null : screenHeight,
+              child: Stepper(
+                type: orientation == Orientation.portrait
+                    ? StepperType.vertical
+                    : StepperType.horizontal,
+                currentStep: currentStep,
+                margin: EdgeInsets.symmetric(horizontal: 30),
+                controlsBuilder:
+                    (BuildContext context, ControlsDetails details) {
+                  return Row(
+                    children: <Widget>[
+                      FilledButton(
+                        onPressed: details.onStepContinue,
+                        child: currentStep == 4 ? Text('Save') : Text('Next'),
+                      ),
+                      SizedBox(width: 50),
+                      FilledButton.tonal(
+                        onPressed: details.onStepCancel,
+                        child: currentStep == 0 ? Text('Cancel') : Text('Back'),
+                      ),
+                    ],
+                  );
+                },
+                onStepCancel: () => currentStep == 0
+                    ? Navigator.pushNamed(context, 'catagory',
+                        arguments: {"catagoryId": widget.catagoryId})
+                    : setState(() {
+                        currentStep -= 1;
+                      }),
+                onStepContinue: () async {
+                  bool isLastStep = (currentStep == getSteps().length - 1);
+                  if (isLastStep) {
+                    Recipe recipe = Recipe(
+                      name: _recipeController.text,
+                      yieldValue: _yieldController.text,
+                      time: double.parse(_timeController.text),
+                      timeUnit: selectedTime!,
+                      imageName: _imageName != null
+                          ? path.extension(_imageName!)
+                          : null,
+                      notes: _notesController.text.isNotEmpty
+                          ? _notesController.text
+                          : null,
+                      catagoryId: widget.catagoryId!,
+                    );
+
+                    int recipeId = await recipe.insertRecipe();
+                    log("test recipe id: $recipeId");
+
+                    List<int> ingredientIds = [];
+                    for (int i = 0;
+                        i < listOfIngredientControllers.length;
+                        i++) {
+                      Ingredient ingredient = Ingredient(
+                          recipeId: recipeId,
+                          ingredientName: listOfIngredientControllers[i].text,
+                          amount: double.parse(listOfUnitControllers[i].text),
+                          unit: selectedUnit[i]!,
+                          sequence: i + 1);
+                      ingredientIds.add(await ingredient.insertIngredient());
+                    }
+
+                    List<int> stepIds = [];
+                    for (int i = 0; i < listOfStepControllers.length; i++) {
+                      recipeStep step = recipeStep(
+                        recipeId: recipeId,
+                        sequence: i + 1,
+                        description: listOfStepControllers[i].text,
                       );
-                    },
-                    onStepCancel: () => currentStep == 0
-                        ? Navigator.pushNamed(context, 'catagory',
-                            arguments: {"catagoryId": widget.catagoryId})
-                        : setState(() {
-                            currentStep -= 1;
-                          }),
-                    onStepContinue: () async {
-                      bool isLastStep = (currentStep == getSteps().length - 1);
-                      if (isLastStep) {
-                        Recipe recipe = Recipe(
-                          name: _recipeController.text,
-                          yieldValue: _yieldController.text,
-                          time: double.parse(_timeController.text),
-                          timeUnit: selectedTime!,
-                          imageName: _imageName != null
-                              ? path.extension(_imageName!)
-                              : null,
-                          notes: _notesController.text.isNotEmpty
-                              ? _notesController.text
-                              : null,
-                          catagoryId: widget.catagoryId!,
-                        );
+                      stepIds.add(await step.insertStep());
+                    }
 
-                        int recipeId = await recipe.insertRecipe();
-                        log("test recipe id: $recipeId");
-
-                        List<int> ingredientIds = [];
-                        for (int i = 0;
-                            i < listOfIngredientControllers.length;
-                            i++) {
-                          Ingredient ingredient = Ingredient(
-                              recipeId: recipeId,
-                              ingredientName:
-                                  listOfIngredientControllers[i].text,
-                              amount:
-                                  double.parse(listOfUnitControllers[i].text),
-                              unit: selectedUnit[i]!,
-                              sequence: i + 1);
-                          ingredientIds
-                              .add(await ingredient.insertIngredient());
-                        }
-
-                        List<int> stepIds = [];
-                        for (int i = 0; i < listOfStepControllers.length; i++) {
-                          recipeStep step = recipeStep(
-                            recipeId: recipeId,
-                            sequence: i + 1,
-                            description: listOfStepControllers[i].text,
-                          );
-                          stepIds.add(await step.insertStep());
-                        }
-
-                        //var response = await http.get(Uri.parse(_image));
-                        if (_imageName != null) {
-                          Directory documentDirectory =
-                              await getApplicationDocumentsDirectory();
-                          String imgPath =
-                              path.join(documentDirectory.path, 'image');
-                          if (!await Directory(imgPath).exists()) {
-                            Directory imgDir = Directory(imgPath);
-                            await imgDir.create(recursive: true);
-                          }
-
-                          String newImgName =
-                              recipeId.toString() + path.extension(_imageName!);
-
-                          imgPath = path.join(imgPath, newImgName);
-                          File imgFile = File(imgPath);
-                          try {
-                            if (await imgFile.exists()) {
-                              // If the file exists, delete it before writing the new data
-                              await imgFile.delete();
-                            }
-
-                            await _image!.copy(imgPath);
-
-                            //await imgFile.writeAsBytes(bytes, flush: true);
-                            log('Image saved to: $imgPath');
-                          } catch (e) {
-                            log('Error saving image: $e');
-                          }
-                        } else {}
-
-                        // await _image.writeAsBytes(response.bodyBytes);
-
-                        setState(() {
-                          Navigator.pushNamed(context, 'finalRecipe',
-                              arguments: {
-                                'recipeId': recipeId,
-                                "catagoryId": widget.catagoryId
-                              });
-                        });
-                      } else {
-                        setState(() {
-                          if (currentStep != 1) {
-                            if (_formKeys[currentStep]
-                                .currentState!
-                                .validate()) {
-                              currentStep++;
-                            }
-                          } else {
-                            currentStep++;
-                          }
-                        });
+                    //var response = await http.get(Uri.parse(_image));
+                    if (_imageName != null) {
+                      Directory documentDirectory =
+                          await getApplicationDocumentsDirectory();
+                      String imgPath =
+                          path.join(documentDirectory.path, 'image');
+                      if (!await Directory(imgPath).exists()) {
+                        Directory imgDir = Directory(imgPath);
+                        await imgDir.create(recursive: true);
                       }
-                    },
-                    /*onStepTapped: (step) => setState(() {
-                      currentStep = step;
-                    }),*/
-                    steps: getSteps(),
-                  ),
-                  /*CustomBtn(
-                    title: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                    ),
-                    callback: () async {
-                      //if (_formKey.currentState!.validate()) {
-                      
-                      //}
-                    },
-                  )*/
-                ],
-              )),
+
+                      String newImgName =
+                          recipeId.toString() + path.extension(_imageName!);
+
+                      imgPath = path.join(imgPath, newImgName);
+                      File imgFile = File(imgPath);
+                      try {
+                        if (await imgFile.exists()) {
+                          // If the file exists, delete it before writing the new data
+                          await imgFile.delete();
+                        }
+
+                        await _image!.copy(imgPath);
+
+                        //await imgFile.writeAsBytes(bytes, flush: true);
+                        log('Image saved to: $imgPath');
+                      } catch (e) {
+                        log('Error saving image: $e');
+                      }
+                    } else {}
+
+                    // await _image.writeAsBytes(response.bodyBytes);
+
+                    setState(() {
+                      Navigator.pushNamed(context, 'finalRecipe', arguments: {
+                        'recipeId': recipeId,
+                        "catagoryId": widget.catagoryId
+                      });
+                    });
+                  } else {
+                    setState(() {
+                      if (currentStep != 1) {
+                        if (_formKeys[currentStep].currentState!.validate()) {
+                          currentStep++;
+                        }
+                      } else {
+                        currentStep++;
+                      }
+                    });
+                  }
+                },
+                /*onStepTapped: (step) => setState(() {
+                          currentStep = step;
+                        }),*/
+                steps: getSteps(),
+              ),
+              /*CustomBtn(
+                        title: const Text(
+                          "Save",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        callback: () async {
+                          //if (_formKey.currentState!.validate()) {
+                          
+                          //}
+                        },
+                      )*/
+            );
+          }),
         ),
       ),
     );
@@ -277,7 +275,7 @@ class _FormPageState extends State<FormPage> {
         return File(croppedImg.path);
       }
     } catch (e) {
-      print(e);
+      log('$e');
     }
     return null;
   }
@@ -290,51 +288,53 @@ class _FormPageState extends State<FormPage> {
         title: const Text("About"),
         content: Form(
           key: _formKeys[0],
-          child: Column(
-            children: [
-              CustomInput(
-                hint: "Title of Recipe",
-                inputBorder: UnderlineInputBorder(),
-                controller: _recipeController,
-                maxLength: 40,
-              ),
-              CustomInput(
-                hint: "Yield",
-                inputBorder: UnderlineInputBorder(),
-                controller: _yieldController,
-                maxLength: 30,
-              ),
-              Row(
-                children: [
-                  SizedBox(
-                    width: 70,
-                    child: CustomInput(
-                      hint: "Time",
-                      inputBorder: UnderlineInputBorder(),
-                      controller: _timeController,
-                      mustBeNumber: true,
-                      maxLength: 4,
+          child: SafeArea(
+            child: Column(
+              children: [
+                CustomInput(
+                  hint: "Title of Recipe",
+                  inputBorder: UnderlineInputBorder(),
+                  controller: _recipeController,
+                  maxLength: 40,
+                ),
+                CustomInput(
+                  hint: "Yield",
+                  inputBorder: UnderlineInputBorder(),
+                  controller: _yieldController,
+                  maxLength: 30,
+                ),
+                Row(
+                  children: [
+                    SizedBox(
+                      width: 70,
+                      child: CustomInput(
+                        hint: "Time",
+                        inputBorder: UnderlineInputBorder(),
+                        controller: _timeController,
+                        mustBeNumber: true,
+                        maxLength: 4,
+                      ),
                     ),
-                  ),
-                  DropdownButton<String>(
-                    value: selectedTime,
-                    hint: Text('Unit'),
-                    onChanged: (String? newValue) {
-                      setState(() {
-                        selectedTime = newValue ?? '';
-                      });
-                    },
-                    items:
-                        timeUnits.map<DropdownMenuItem<String>>((String value) {
-                      return DropdownMenuItem<String>(
-                        value: value,
-                        child: Text(value),
-                      );
-                    }).toList(),
-                  ),
-                ],
-              ),
-            ],
+                    DropdownButton<String>(
+                      value: selectedTime,
+                      hint: Text('Unit'),
+                      onChanged: (String? newValue) {
+                        setState(() {
+                          selectedTime = newValue ?? '';
+                        });
+                      },
+                      items: timeUnits
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value, style: TextStyle(fontSize: 12)),
+                        );
+                      }).toList(),
+                    ),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
@@ -431,32 +431,33 @@ class _FormPageState extends State<FormPage> {
                             Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                SizedBox(
-                                  width: 150,
-                                  child: CustomInput(
-                                    hint: "${index + 1}",
-                                    inputBorder: UnderlineInputBorder(),
-                                    controller:
-                                        listOfIngredientControllers[index],
-                                    maxLength: 40,
-                                  ),
-                                ),
-                                Row(
-                                  children: [
-                                    SizedBox(
-                                      width: 60,
+                                Expanded(
+                                    child: FractionallySizedBox(
+                                      widthFactor: 0.9,
                                       child: CustomInput(
-                                        hint: "Amount",
+                                        hint: "${index + 1}",
                                         inputBorder: UnderlineInputBorder(),
                                         controller:
-                                            listOfUnitControllers[index],
-                                        mustBeNumber: true,
-                                        maxLength: 4,
+                                            listOfIngredientControllers[index],
+                                        maxLength: 40,
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: 50,
-                                      child: DropdownButton<String>(
+                                  //),
+                                ),
+                                Row(
+                                    children: [
+                                      SizedBox(
+                                        width: 65,
+                                        child: CustomInput(
+                                          hint: "Amount",
+                                          inputBorder: UnderlineInputBorder(),
+                                          controller:
+                                              listOfUnitControllers[index],
+                                          mustBeNumber: true,
+                                          maxLength: 4,
+                                        ),
+                                      ),
+                                      DropdownButton<String>(
                                         value: selectedUnit[index],
                                         hint: Text('Unit'),
                                         onChanged: (String? newValue) {
@@ -470,25 +471,32 @@ class _FormPageState extends State<FormPage> {
                                                 (String value) {
                                           return DropdownMenuItem<String>(
                                             value: value,
-                                            child: Text(value),
+                                            child: Text(
+                                              value,
+                                              style: TextStyle(fontSize: 12),
+                                            ),
                                           );
                                         }).toList(),
                                       ),
-                                    ),
-                                  ],
-                                ),
+                                      // ),
+                                    ],
+                                  ),
+                                
                               ],
                             ),
                             SizedBox(
-                              height: 30,
-                              width: 85,
-                              child: OutlinedButton(
+                                height: 30,
+                                width: 85,
+                                child: OutlinedButton(
                                   onPressed: () {
                                     deleteIngredient(index);
                                   },
-                                  child: Text("Delete", style: TextStyle(fontSize: 11)),
-                              )
-                            )
+                                  child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: Text("Delete",
+                                        style: TextStyle(fontSize: 11)),
+                                  ),
+                                ))
                           ],
                         );
                       },
@@ -531,8 +539,8 @@ class _FormPageState extends State<FormPage> {
                       (index) {
                         return Column(
                           children: [
-                            SizedBox(
-                              width: 300,
+                            FractionallySizedBox(
+                              widthFactor: 1,
                               child: CustomInput(
                                 hint: "${index + 1}",
                                 inputBorder: UnderlineInputBorder(),
@@ -541,15 +549,18 @@ class _FormPageState extends State<FormPage> {
                               ),
                             ),
                             SizedBox(
-                              height: 30,
-                              width: 85,
-                              child: OutlinedButton(
+                                height: 30,
+                                width: 85,
+                                child: OutlinedButton(
                                   onPressed: () {
                                     deleteStep(index);
                                   },
-                                  child: Text("Delete", style: TextStyle(fontSize: 11)),
-                              )
-                            )
+                                  child: FittedBox(
+                                    fit: BoxFit.contain,
+                                    child: Text("Delete",
+                                        style: TextStyle(fontSize: 11)),
+                                  ),
+                                ))
                           ],
                         );
                       },
@@ -577,15 +588,20 @@ class _FormPageState extends State<FormPage> {
         state: currentStep > 4 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 4,
         title: const Text("Additional Notes"),
-        content: Column(
-          children: [
-            CustomInput(
-              hint: "Notes",
-              inputBorder: OutlineInputBorder(),
-              controller: _notesController,
-              maxLength: 400,
+        content: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 3.0),
+            child: Column(
+              children: [
+                CustomInput(
+                  hint: "Notes",
+                  inputBorder: OutlineInputBorder(),
+                  controller: _notesController,
+                  maxLength: 400,
+                ),
+              ],
             ),
-          ],
+          ),
         ),
       ),
     ];

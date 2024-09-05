@@ -73,6 +73,7 @@ flutter:
   assets:
       - assets/images/backup-screenshot.png
       - assets/images/finished-recipe-screenshot.jpg
+      - assets/images/dessert-page-screenshot.jpeg
       - assets/images/finished-recipe-top.jpg
       - assets/images/finished-recipe-buttons.jpg
       - assets/images/dessert-icon.PNG
@@ -82,6 +83,12 @@ flutter:
       - assets/images/lunch-icon.PNG
       - assets/images/others-icon.PNG
       - assets/images/cover-icon.PNG
+      - assets/images/dessert-background.png
+      - assets/images/appetizer-background.png
+      - assets/images/entree-background.png
+      - assets/images/lunch-background.png
+      - assets/images/breakfast-background.png
+      - assets/images/others-background.png
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

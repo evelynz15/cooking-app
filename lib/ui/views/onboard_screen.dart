@@ -6,7 +6,7 @@ import 'dart:developer';
 
 final List<OnBoard> demoData = [
   OnBoard(
-    image: "assets/images/backup-screenshot.png",
+    image: "assets/images/dessert-page-screenshot.jpeg",
     title: "6 Different Recipe Catagories to Choose From",
     description: "Add your own recipes to each using the + button",
   ),
@@ -18,7 +18,7 @@ final List<OnBoard> demoData = [
   ),
   OnBoard(
     image: "assets/images/backup-screenshot.png",
-    title: "Backup Your Data to Save it From Crashes",
+    title: "Backup Your Data to Save it Indefinitely.",
     description:
         "Use the backup and restore options in settings to prevent the loss of your recipes",
   ),
@@ -105,7 +105,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
     return Scaffold(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         body: Padding(
-          padding: const EdgeInsets.all(20.0),
+          padding: const EdgeInsets.all(15.0),
           child: SafeArea(
             child: Column(
               children: [
@@ -156,9 +156,9 @@ class _OnboardScreenState extends State<OnboardScreen> {
                     ],
                   ),
                 ),
-                const SizedBox(
-                  height: 16,
-                ),
+                /*const SizedBox(
+                  height: 8,
+                ),*/
                 // Button area
                 InkWell(
                   onTap: () {
@@ -202,43 +202,100 @@ class OnBoard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const Spacer(),
-        Text(
-          title,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 20,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const SizedBox(
-          height: 16,
-        ),
-        Text(
-          description,
-          textAlign: TextAlign.center,
-          style: const TextStyle(
-            color: Colors.black,
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
-        const Spacer(),
-        Container(
-          child: secondImage != null
-              ? Column(
-                  children: [Image.asset(image), Image.asset(secondImage!)],
-                )
-              : Image.asset(image),
-          decoration:
-              BoxDecoration(border: Border.all(width: 5, color: Colors.white)),
-        ),
-        const Spacer(),
-      ],
-    );
+    return OrientationBuilder(builder: (context, orientation) {
+      return orientation == Orientation.portrait
+          ? Column(
+              children: [
+                const Spacer(),
+                Text(
+                  title,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const SizedBox(
+                  height: 16,
+                ),
+                Text(
+                  description,
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(
+                    color: Colors.black,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  child: secondImage != null
+                      ? Column(
+                          children: [
+                            Image.asset(image),
+                            Image.asset(secondImage!)
+                          ],
+                        )
+                      : Image.asset(image),
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 5, color: Colors.white)),
+                ),
+                const Spacer(),
+              ],
+            )
+          : 
+                Row(
+                  children: [
+                    Expanded(
+                      
+                        //widthFactor: 0.8,
+                        child: Wrap(
+                          children: [
+                            Text(
+                              title,
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              description,
+                              textAlign: TextAlign.start,
+                              style: const TextStyle(
+                                color: Colors.black,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      SizedBox(width: 20),
+                    
+                     //Spacer(),
+                    Flexible(
+                      child: FractionallySizedBox(
+                        widthFactor: 1,
+                        child: Container(
+                          child: /*secondImage != null
+                              ? Column(
+                                  children: [
+                                    Image.asset(image),
+                                    Image.asset(secondImage!)
+                                  ],
+                                )
+                              : */Image.asset(image,),
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 5, color: Colors.white)),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+    });
   }
 }
 
