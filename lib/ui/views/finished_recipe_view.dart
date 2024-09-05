@@ -151,6 +151,14 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
             }
           }
 
+          dynamic getCleanNumber(double amount) {
+            if (amount == (amount).floor()) {
+              return amount.toInt();
+            } else {
+              return amount;
+            }
+          }
+
           return Builder(builder: (context) {
             final orientation = MediaQuery.of(context).orientation;
             return Padding(
@@ -238,7 +246,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                 "Yield: ${recipeData!.yieldValue}",
                                                 style: TextStyle(fontSize: 14)),
                                             Text(
-                                                "Time: ${recipeData!.time.toString()} ${getTimeUnit()}",
+                                                "Time: ${getCleanNumber(recipeData!.time).toString()} ${getTimeUnit()}",
                                                 style: TextStyle(fontSize: 14)),
                                             SizedBox(height: 30),
                                             SizedBox(
@@ -340,10 +348,10 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                     SizedBox(
                                                       //width: 50,
                                                       child: Text(
-                                                          recipeData!
-                                                                  .ingredientList![
-                                                                      index]
-                                                                  .amount
+                                                          getCleanNumber(recipeData!
+                                                                      .ingredientList![
+                                                                          index]
+                                                                      .amount)
                                                                   .toString() +
                                                               " " +
                                                               getIngredientUnit(

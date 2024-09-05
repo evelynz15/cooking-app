@@ -136,13 +136,22 @@ class _EditFormPageState extends State<EditFormPage> {
             //print('project snapshot data is: ${projectSnap.data}');
             return const Center(child: CircularProgressIndicator());
           } else {
+
+            dynamic getCleanNumber(double amount){
+              if (amount == (amount).floor()) {
+                return amount.toInt();
+              } else {
+                return amount;
+              }
+            }
+
             if (_recipeController == null) {
               _recipeController =
                   TextEditingController(text: recipeSnap.data!.name);
               _yieldController =
                   TextEditingController(text: recipeSnap.data!.yieldValue);
               _timeController =
-                  TextEditingController(text: recipeSnap.data!.time.toString());
+                  TextEditingController(text: getCleanNumber(recipeSnap.data!.time).toString());
               _notesController =
                   TextEditingController(text: recipeSnap.data!.notes);
               for (Ingredient ingredientInfo
@@ -150,7 +159,7 @@ class _EditFormPageState extends State<EditFormPage> {
                 listOfIngredientControllers.add(
                     TextEditingController(text: ingredientInfo.ingredientName));
                 listOfUnitControllers.add(TextEditingController(
-                    text: ingredientInfo.amount.toString()));
+                    text: getCleanNumber(ingredientInfo.amount).toString()));
               }
               for (recipeStep step in recipeSnap.data!.stepList!) {
                 listOfStepControllers
@@ -165,6 +174,7 @@ class _EditFormPageState extends State<EditFormPage> {
               recipeSnap.data!.imageName != null ? _image = recipeImg : _image;
               _imageName = recipeSnap.data!.imageName;
             }
+            
 
             List<Step> getSteps() {
               return <Step>[
@@ -507,10 +517,12 @@ class _EditFormPageState extends State<EditFormPage> {
               Builder(
                 builder: (context) {
                   final orientation = MediaQuery.of(context).orientation;
-                  return Container(
+                  return 
+                  Container(
                     padding: const EdgeInsets.all(0),
                     height: orientation == Orientation.portrait ? null : 400,
                     child: Stepper(
+                      physics: ClampingScrollPhysics(),
                       type: orientation == Orientation.portrait
                     ? StepperType.vertical
                     : StepperType.horizontal,

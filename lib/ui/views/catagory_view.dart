@@ -149,6 +149,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                           Text(
                             recipe.name.capitalize(),
                             textAlign: TextAlign.center,
+                            overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontSize: 20, // Adjust size as needed
                               fontWeight: FontWeight.bold,
