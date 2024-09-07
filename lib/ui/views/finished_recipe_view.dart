@@ -330,7 +330,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceBetween,
                                           children: [
-                                            Expanded(
+                                            Flexible(
                                               //width: 200,
                                               child: Text(
                                                   recipeData!
@@ -340,38 +340,39 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                   style:
                                                       TextStyle(fontSize: 14)),
                                             ),
-                                            Flexible(
-                                              child: FractionallySizedBox(
-                                                widthFactor: 0.5,
-                                                child: Row(
-                                                  children: [
-                                                    SizedBox(
-                                                      //width: 50,
-                                                      child: Text(
-                                                          getCleanNumber(recipeData!
+                                            Column(
+                                                // child: FractionallySizedBox(
+                                                //   widthFactor: 0.5,
+                                                children: [
+                                                  Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceBetween,
+                                                      children: [
+                                                        SizedBox(
+                                                          //width: 50,
+                                                          child: Text(
+                                                              getCleanNumber(recipeData!
                                                                       .ingredientList![
                                                                           index]
                                                                       .amount)
-                                                                  .toString() +
-                                                              " " +
+                                                                  .toString(),
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14)),
+                                                        ),
+                                                        SizedBox(width: 20),
+                                                        SizedBox(
+                                                          width: 50,
+                                                          child: Text(
                                                               getIngredientUnit(
                                                                   index),
-                                                          style: TextStyle(
-                                                              fontSize: 14)),
-                                                    ),
-                                                    /*SizedBox(
-                                                        width: 70,
-                                                        child: Text(
-                                                            recipeData!
-                                                                .ingredientList![
-                                                                    index]
-                                                                .unit,
-                                                            style: TextStyle(
-                                                                fontSize: 14))),*/
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
+                                                              style: TextStyle(
+                                                                  fontSize:
+                                                                      14)),
+                                                        ),
+                                                      ]),
+                                                ]),
                                           ],
                                         );
                                       },
@@ -545,7 +546,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                             SizedBox(
                                                 //width: 80,
                                                 child: Text(
-                                                    "Time: ${recipeData!.time.toString()} ${getTimeUnit()}",
+                                                    "Time: ${getCleanNumber(recipeData!.time).toString()} ${getTimeUnit()}",
                                                     style: TextStyle(
                                                         fontSize: 14))),
                                             SizedBox(height: 20),
@@ -623,7 +624,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                             SizedBox(
                                               height: screenHeight * 0.2,
                                               child: ListView.builder(
-                                                padding: EdgeInsets.all(16.0),
+                                                //padding: EdgeInsets.all(16.0),
                                                 itemCount: recipeData!
                                                     .ingredientList!.length,
                                                 itemBuilder:
@@ -634,8 +635,8 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                         MainAxisAlignment
                                                             .spaceBetween,
                                                     children: [
-                                                      SizedBox(
-                                                        width: 200,
+                                                      Flexible(
+                                                        //width: 200,
                                                         child: Text(
                                                             recipeData!
                                                                 .ingredientList![
@@ -645,32 +646,35 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                             style: TextStyle(
                                                                 fontSize: 14)),
                                                       ),
-                                                      Row(
-                                                        children: [
-                                                          SizedBox(
-                                                            width: 50,
-                                                            child: Text(
-                                                                recipeData!
-                                                                    .ingredientList![
-                                                                        index]
-                                                                    .amount
+                                                      Column(children: [
+                                                        Row(
+                                                          mainAxisAlignment:
+                                                              MainAxisAlignment
+                                                                  .spaceBetween,
+                                                          children: [
+                                                            Text(
+                                                                getCleanNumber(recipeData!
+                                                                        .ingredientList![
+                                                                            index]
+                                                                        .amount)
                                                                     .toString(),
                                                                 style: TextStyle(
                                                                     fontSize:
                                                                         14)),
-                                                          ),
-                                                          SizedBox(
-                                                              width: 70,
-                                                              child: Text(
-                                                                  recipeData!
-                                                                      .ingredientList![
-                                                                          index]
-                                                                      .unit,
-                                                                  style: TextStyle(
-                                                                      fontSize:
-                                                                          14))),
-                                                        ],
-                                                      ),
+                                                            SizedBox(
+                                                              width: 20,
+                                                            ),
+                                                            Text(
+                                                                recipeData!
+                                                                    .ingredientList![
+                                                                        index]
+                                                                    .unit,
+                                                                style: TextStyle(
+                                                                    fontSize:
+                                                                        14))
+                                                          ],
+                                                        ),
+                                                      ]),
                                                     ],
                                                   );
                                                 },
