@@ -165,14 +165,18 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
                 child: Center(
                     child: SafeArea(
+                      child: SingleChildScrollView(
+                              child: SizedBox(
+                                //padding: const EdgeInsets.symmetric(horizontal: 32),
+                                height: MediaQuery.of(context).size.height,
                         child: orientation == Orientation.portrait
                             ? Column(
                                 children: [
                                   Text(recipeData!.name.capitalize(),
-                                      style: TextStyle(
+                                      style: const TextStyle(
                                           fontSize: 18,
                                           fontWeight: FontWeight.bold)),
-                                  SizedBox(height: 20),
+                                  const SizedBox(height: 20),
                                   Row(
                                     mainAxisAlignment:
                                         MainAxisAlignment.spaceEvenly,
@@ -770,7 +774,10 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                   ),
                                   SizedBox(height: 30),
                                 ],
-                              ))));
+                              )
+                              )
+                      )
+                              )));
           });
         }
       },
