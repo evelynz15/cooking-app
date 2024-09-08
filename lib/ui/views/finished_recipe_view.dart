@@ -16,6 +16,8 @@ import 'package:cookingapp/ui/views/recipe_stepper_edit_view.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 
+enum Menu { edit, delete, share }
+
 class FinishedRecipe extends StatefulWidget {
   final int recipeId;
   final int catagoryId;
@@ -160,624 +162,577 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
           }
 
           return Builder(builder: (context) {
-            final orientation = MediaQuery.of(context).orientation;
-            return Padding(
-                padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
-                child: Center(
+            final orientation = MediaQuery.of(context).orientation;  
+            return 
+                 Center(
                     child: SafeArea(
-                      child: SingleChildScrollView(
-                              child: SizedBox(
+                        child: SingleChildScrollView(
+                          child: Padding(
+                padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
+                            child: SizedBox(
                                 //padding: const EdgeInsets.symmetric(horizontal: 32),
-                                height: MediaQuery.of(context).size.height,
-                        child: orientation == Orientation.portrait
-                            ? Column(
-                                children: [
-                                  Text(recipeData!.name.capitalize(),
-                                      style: const TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold)),
-                                  const SizedBox(height: 20),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ImageHero(
-                                          height: screenHeight * 0.17,
-                                          width: screenHeight * 0.17,
-                                          image: recipeData!.imageName != null
-                                              ? Image.file(recipeImg,
-                                                  key: UniqueKey())
-                                              : Container(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .inversePrimary,
-                                                  child: Image.asset(coverIcon),
-                                                ),
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute<void>(
-                                                    builder: (context) {
-                                              return Scaffold(
-                                                appBar: AppBar(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
-                                                  title: Text("Recipe Image"),
-                                                ),
-                                                body: Center(
-                                                  child: Container(
-                                                    // Set background to blue to emphasize that it's a new route.
-                                                    //color: Colors.lightBlueAccent,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            16),
-                                                    child: ImageHero(
-                                                      image: recipeData!
-                                                                  .imageName !=
-                                                              null
-                                                          ? Image.file(
-                                                              recipeImg,
-                                                              key: UniqueKey())
-                                                          : Container(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .inversePrimary,
-                                                              child: Image.asset(
-                                                                  coverIcon),
-                                                            ),
-                                                      width: screenWidth * 0.9,
-                                                      onTap: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }));
-                                          }),
-                                      Container(
-                                        width: screenWidth * 0.4,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                "Yield: ${recipeData!.yieldValue}",
-                                                style: TextStyle(fontSize: 14)),
-                                            Text(
-                                                "Time: ${getCleanNumber(recipeData!.time).toString()} ${getTimeUnit()}",
-                                                style: TextStyle(fontSize: 14)),
-                                            SizedBox(height: 30),
-                                            SizedBox(
-                                              width: 120,
-                                              height: 40,
-                                              child: OutlinedButton(
-                                                onPressed: () async {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return AlertDialog(
-                                                          scrollable: true,
-                                                          title: Text('Notes'),
-                                                          content: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    border: Border
-                                                                        .all()),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(
-                                                                      12.0),
-                                                              child: Form(
-                                                                child: Column(
-                                                                  children: <Widget>[
-                                                                    Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .topLeft,
-                                                                      child: Container(
-                                                                          width: screenWidth *
-                                                                              0.7,
-                                                                          child: Text(
-                                                                              recipeData!.notes != null ? recipeData!.notes!.capitalize() : "No notes",
-                                                                              style: TextStyle(fontSize: 14))),
+                                height: screenHeight,
+                                child: orientation == Orientation.portrait
+                                    ? Column(
+                                        children: [
+                                          Text(recipeData!.name.capitalize(),
+                                              style: const TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold)),
+                                          const SizedBox(height: 20),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ImageHero(
+                                                  height: screenHeight * 0.17,
+                                                  width: screenHeight * 0.17,
+                                                  image: recipeData!
+                                                              .imageName !=
+                                                          null
+                                                      ? Image.file(recipeImg,
+                                                          key: UniqueKey())
+                                                      : Container(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .inversePrimary,
+                                                          child: Image.asset(
+                                                              coverIcon),
+                                                        ),
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute<void>(
+                                                            builder: (context) {
+                                                      return Scaffold(
+                                                        appBar: AppBar(
+                                                          backgroundColor: Theme
+                                                                  .of(context)
+                                                              .colorScheme
+                                                              .inversePrimary,
+                                                          title: Text(
+                                                              "Recipe Image"),
+                                                        ),
+                                                        body: Center(
+                                                          child: Container(
+                                                            // Set background to blue to emphasize that it's a new route.
+                                                            //color: Colors.lightBlueAccent,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(16),
+                                                            child: ImageHero(
+                                                              image: recipeData!
+                                                                          .imageName !=
+                                                                      null
+                                                                  ? Image.file(
+                                                                      recipeImg,
+                                                                      key:
+                                                                          UniqueKey())
+                                                                  : Container(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .colorScheme
+                                                                          .inversePrimary,
+                                                                      child: Image
+                                                                          .asset(
+                                                                              coverIcon),
                                                                     ),
-                                                                  ],
-                                                                ),
-                                                              ),
+                                                              width:
+                                                                  screenWidth *
+                                                                      0.9,
+                                                              onTap: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
                                                             ),
                                                           ),
-                                                          actions: [
-                                                            ElevatedButton(
-                                                                child: Text(
-                                                                    "Done"),
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                })
-                                                          ],
-                                                        );
-                                                      });
-                                                },
-                                                child: Text("Notes"),
+                                                        ),
+                                                      );
+                                                    }));
+                                                  }),
+                                              SizedBox(
+                                                width: screenWidth * 0.4,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                        "Yield: ${recipeData!.yieldValue}",
+                                                        style: const TextStyle(
+                                                            fontSize: 14)),
+                                                    Text(
+                                                        "Time: ${getCleanNumber(recipeData!.time).toString()} ${getTimeUnit()}",
+                                                        style: const TextStyle(
+                                                            fontSize: 14)),
+                                                    const SizedBox(height: 30),
+                                                    SizedBox(
+                                                      width: 120,
+                                                      height: 40,
+                                                      child: OutlinedButton(
+                                                        onPressed: () async {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  scrollable:
+                                                                      true,
+                                                                  title: const Text(
+                                                                      'Notes'),
+                                                                  content:
+                                                                      Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                            border:
+                                                                                Border.all()),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          12.0),
+                                                                      child:
+                                                                          Form(
+                                                                        child:
+                                                                            Column(
+                                                                          children: <Widget>[
+                                                                            Align(
+                                                                              alignment: Alignment.topLeft,
+                                                                              child: SizedBox(width: screenWidth * 0.7, child: Text(recipeData!.notes != null ? recipeData!.notes!.capitalize() : "No notes", style: const TextStyle(fontSize: 14))),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  actions: [
+                                                                    ElevatedButton(
+                                                                        child: const Text(
+                                                                            "Done"),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        })
+                                                                  ],
+                                                                );
+                                                              });
+                                                        },
+                                                        child:
+                                                            const Text("Notes"),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 30),
+                                          Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: const Text(
+                                                  "Ingredients List:",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold))),
+                                          Flexible(child: 
+                                            ListView.builder(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                             // itemExtent: 40.0,
+                                              padding: EdgeInsets.all(16.0),
+                                              itemCount: recipeData!
+                                                  .ingredientList!.length,
+                                              prototypeItem: const Row(children: [Text("")],),
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    Flexible(
+                                                      //width: 200,
+                                                      child: Text(
+                                                          recipeData!
+                                                              .ingredientList![
+                                                                  index]
+                                                              .ingredientName
+                                                              .capitalize(),
+                                                          style: TextStyle(
+                                                              fontSize: 14)),
+                                                    ),
+                                                    Column(
+                                                        // child: FractionallySizedBox(
+                                                        //   widthFactor: 0.5,
+                                                        children: [
+                                                          Row(
+                                                              mainAxisAlignment:
+                                                                  MainAxisAlignment
+                                                                      .spaceBetween,
+                                                              children: [
+                                                                SizedBox(
+                                                                  //width: 50,
+                                                                  child: Text(
+                                                                      getCleanNumber(recipeData!
+                                                                              .ingredientList![
+                                                                                  index]
+                                                                              .amount)
+                                                                          .toString(),
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14)),
+                                                                ),
+                                                                SizedBox(
+                                                                    width: 20),
+                                                                SizedBox(
+                                                                  width: 50,
+                                                                  child: Text(
+                                                                      getIngredientUnit(
+                                                                          index),
+                                                                      style: TextStyle(
+                                                                          fontSize:
+                                                                              14)),
+                                                                ),
+                                                              ]),
+                                                        ]),
+                                                  ],
+                                                );
+                                              },
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Ingredients List:",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold))),
-                                  SizedBox(
-                                    height: screenHeight * 0.15,
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.all(16.0),
-                                      itemCount:
-                                          recipeData!.ingredientList!.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Flexible(
+                                          ),
+                                          SizedBox(height: 30),
+                                          Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text("Procedure:",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold))),
+                                          Column(
                                               //width: 200,
-                                              child: Text(
-                                                  recipeData!
-                                                      .ingredientList![index]
-                                                      .ingredientName
-                                                      .capitalize(),
-                                                  style:
-                                                      TextStyle(fontSize: 14)),
-                                            ),
-                                            Column(
-                                                // child: FractionallySizedBox(
-                                                //   widthFactor: 0.5,
-                                                children: [
-                                                  Row(
-                                                      mainAxisAlignment:
-                                                          MainAxisAlignment
-                                                              .spaceBetween,
-                                                      children: [
-                                                        SizedBox(
-                                                          //width: 50,
-                                                          child: Text(
-                                                              getCleanNumber(recipeData!
-                                                                      .ingredientList![
-                                                                          index]
-                                                                      .amount)
-                                                                  .toString(),
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      14)),
-                                                        ),
-                                                        SizedBox(width: 20),
-                                                        SizedBox(
-                                                          width: 50,
-                                                          child: Text(
-                                                              getIngredientUnit(
-                                                                  index),
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      14)),
-                                                        ),
-                                                      ]),
-                                                ]),
-                                          ],
-                                        );
-                                      },
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Procedure:",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold))),
-                                  SizedBox(
-                                    //width: 200,
-                                    height: screenHeight * 0.15,
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.all(16.0),
-                                      itemCount: recipeData!.stepList!.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return ListTile(
-                                            leading: Text(
-                                                recipeData!
-                                                    .stepList![index].sequence
-                                                    .toString(),
-                                                style: TextStyle(fontSize: 14)),
-                                            title: Text(
-                                                recipeData!.stepList![index]
-                                                    .description
-                                                    .capitalize(),
-                                                style:
-                                                    TextStyle(fontSize: 14)));
-                                      },
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        SizedBox(
-                                          height: 40,
-                                          width: 100,
-                                          child: FloatingActionButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditFormPage(
-                                                                recipeId: widget
-                                                                    .recipeId,
-                                                                catagoryId: widget
-                                                                    .catagoryId)));
-                                              });
-                                            },
-                                            child: Text("Edit"),
-                                          ),
-                                        ),
-                                        //Spacer(),
-                                        SizedBox(
-                                          height: 40,
-                                          width: 100,
-                                          child: FloatingActionButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                recipeData!.deleteRecipeInfo(
-                                                    recipeData!.id);
-                                                if (recipeData!.imageName !=
-                                                    null) {
-                                                  recipeImg.delete();
-                                                } else {}
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            CatagoryPage(
-                                                                catagoryId: widget
-                                                                    .catagoryId)));
-                                              });
-                                            },
-                                            child: Text("Delete"),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              )
-                            : Column(
-                                children: [
-                                  Text(recipeData!.name.capitalize(),
-                                      style: TextStyle(
-                                          fontSize: 18,
-                                          fontWeight: FontWeight.bold)),
-                                  SizedBox(height: 10),
-                                  Row(
-                                    mainAxisAlignment:
-                                        MainAxisAlignment.spaceEvenly,
-                                    children: [
-                                      ImageHero(
-                                          height: screenHeight * 0.3,
-                                          width: screenHeight * 0.3,
-                                          image: recipeData!.imageName != null
-                                              ? Image.file(recipeImg,
-                                                  key: UniqueKey())
-                                              : Container(
-                                                  color: Theme.of(context)
-                                                      .colorScheme
-                                                      .inversePrimary,
-                                                  child: Image.asset(coverIcon),
-                                                ),
-                                          onTap: () {
-                                            Navigator.of(context).push(
-                                                MaterialPageRoute<void>(
-                                                    builder: (context) {
-                                              return Scaffold(
-                                                appBar: AppBar(
-                                                  backgroundColor:
-                                                      Theme.of(context)
-                                                          .colorScheme
-                                                          .inversePrimary,
-                                                  title: Text("Recipe Image"),
-                                                ),
-                                                body: Center(
-                                                  child: Container(
-                                                    // Set background to blue to emphasize that it's a new route.
-                                                    //color: Colors.lightBlueAccent,
-                                                    padding:
-                                                        const EdgeInsets.all(
-                                                            16),
-                                                    child: ImageHero(
-                                                      image: recipeData!
-                                                                  .imageName !=
-                                                              null
-                                                          ? Image.file(
-                                                              recipeImg,
-                                                              key: UniqueKey())
-                                                          : Container(
-                                                              color: Theme.of(
-                                                                      context)
-                                                                  .colorScheme
-                                                                  .inversePrimary,
-                                                              child: Image.asset(
-                                                                  coverIcon),
-                                                            ),
-                                                      width: screenWidth * 0.9,
-                                                      onTap: () {
-                                                        Navigator.of(context)
-                                                            .pop();
-                                                      },
-                                                    ),
-                                                  ),
-                                                ),
-                                              );
-                                            }));
-                                          }),
-                                      SizedBox(width: 20),
-                                      Container(
-                                        width: screenWidth * 0.2,
-                                        child: Column(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceEvenly,
-                                          crossAxisAlignment:
-                                              CrossAxisAlignment.start,
-                                          children: [
-                                            Text(
-                                                "Yield: ${recipeData!.yieldValue}",
-                                                style: TextStyle(fontSize: 14)),
-                                            SizedBox(
-                                                //width: 80,
-                                                child: Text(
-                                                    "Time: ${getCleanNumber(recipeData!.time).toString()} ${getTimeUnit()}",
-                                                    style: TextStyle(
-                                                        fontSize: 14))),
-                                            SizedBox(height: 20),
-                                            SizedBox(
-                                              width: 120,
-                                              height: 40,
-                                              child: OutlinedButton(
-                                                onPressed: () async {
-                                                  showDialog(
-                                                      context: context,
-                                                      builder: (BuildContext
-                                                          context) {
-                                                        return AlertDialog(
-                                                          scrollable: true,
-                                                          title: Text('Notes'),
-                                                          content: Container(
-                                                            decoration:
-                                                                BoxDecoration(
-                                                                    border: Border
-                                                                        .all()),
-                                                            child: Padding(
-                                                              padding:
-                                                                  const EdgeInsets
-                                                                      .all(
-                                                                      12.0),
-                                                              child: Form(
-                                                                child: Column(
-                                                                  children: <Widget>[
-                                                                    Align(
-                                                                      alignment:
-                                                                          Alignment
-                                                                              .topLeft,
-                                                                      child: Container(
-                                                                          width: screenWidth *
-                                                                              0.7,
-                                                                          child: Text(
-                                                                              recipeData!.notes != null ? recipeData!.notes!.capitalize() : "No notes",
-                                                                              style: TextStyle(fontSize: 14))),
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              ),
-                                                            ),
-                                                          ),
-                                                          actions: [
-                                                            ElevatedButton(
-                                                                child: Text(
-                                                                    "Done"),
-                                                                onPressed: () {
-                                                                  Navigator.of(
-                                                                          context)
-                                                                      .pop();
-                                                                })
-                                                          ],
-                                                        );
-                                                      });
-                                                },
-                                                child: Text("Notes"),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                      //Spacer(),
-                                      Expanded(
-                                        child: Column(
-                                          children: [
-                                            Container(
-                                                alignment: Alignment.centerLeft,
-                                                child: Text("Ingredients List:",
-                                                    style: TextStyle(
-                                                        fontSize: 15,
-                                                        fontWeight:
-                                                            FontWeight.bold))),
-                                            SizedBox(
-                                              height: screenHeight * 0.2,
-                                              child: ListView.builder(
-                                                //padding: EdgeInsets.all(16.0),
-                                                itemCount: recipeData!
-                                                    .ingredientList!.length,
-                                                itemBuilder:
-                                                    (BuildContext context,
-                                                        int index) {
-                                                  return Row(
-                                                    mainAxisAlignment:
-                                                        MainAxisAlignment
-                                                            .spaceBetween,
-                                                    children: [
-                                                      Flexible(
-                                                        //width: 200,
-                                                        child: Text(
+                                              //height: screenHeight * 0.15,
+                                              children: [
+                                                ListView.builder(
+                                                  physics:
+                                                      NeverScrollableScrollPhysics(),
+                                                  shrinkWrap: true,
+                                                  padding: EdgeInsets.all(16.0),
+                                                  itemCount: recipeData!
+                                                      .stepList!.length,
+                                                  itemBuilder:
+                                                      (BuildContext context,
+                                                          int index) {
+                                                    return ListTile(
+                                                        leading: Text(
                                                             recipeData!
-                                                                .ingredientList![
+                                                                .stepList![
                                                                     index]
-                                                                .ingredientName
-                                                                .capitalize(),
+                                                                .sequence
+                                                                .toString(),
                                                             style: TextStyle(
                                                                 fontSize: 14)),
+                                                        title: Text(
+                                                            recipeData!
+                                                                .stepList![
+                                                                    index]
+                                                                .description
+                                                                .capitalize(),
+                                                            style: TextStyle(
+                                                                fontSize: 14)));
+                                                  },
+                                                ),
+                                              ]),
+                                        ],
+                                      )
+                                    : Column(
+                                        children: [
+                                          Text(recipeData!.name.capitalize(),
+                                              style: TextStyle(
+                                                  fontSize: 18,
+                                                  fontWeight: FontWeight.bold)),
+                                          SizedBox(height: 10),
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceEvenly,
+                                            children: [
+                                              ImageHero(
+                                                  height: screenHeight * 0.3,
+                                                  width: screenHeight * 0.3,
+                                                  image: recipeData!
+                                                              .imageName !=
+                                                          null
+                                                      ? Image.file(recipeImg,
+                                                          key: UniqueKey())
+                                                      : Container(
+                                                          color: Theme.of(
+                                                                  context)
+                                                              .colorScheme
+                                                              .inversePrimary,
+                                                          child: Image.asset(
+                                                              coverIcon),
+                                                        ),
+                                                  onTap: () {
+                                                    Navigator.of(context).push(
+                                                        MaterialPageRoute<void>(
+                                                            builder: (context) {
+                                                      return Scaffold(
+                                                        appBar: AppBar(
+                                                          backgroundColor: Theme
+                                                                  .of(context)
+                                                              .colorScheme
+                                                              .inversePrimary,
+                                                          title: Text(
+                                                              "Recipe Image"),
+                                                        ),
+                                                        body: Center(
+                                                          child: Container(
+                                                            // Set background to blue to emphasize that it's a new route.
+                                                            //color: Colors.lightBlueAccent,
+                                                            padding:
+                                                                const EdgeInsets
+                                                                    .all(16),
+                                                            child: ImageHero(
+                                                              image: recipeData!
+                                                                          .imageName !=
+                                                                      null
+                                                                  ? Image.file(
+                                                                      recipeImg,
+                                                                      key:
+                                                                          UniqueKey())
+                                                                  : Container(
+                                                                      color: Theme.of(
+                                                                              context)
+                                                                          .colorScheme
+                                                                          .inversePrimary,
+                                                                      child: Image
+                                                                          .asset(
+                                                                              coverIcon),
+                                                                    ),
+                                                              width:
+                                                                  screenWidth *
+                                                                      0.9,
+                                                              onTap: () {
+                                                                Navigator.of(
+                                                                        context)
+                                                                    .pop();
+                                                              },
+                                                            ),
+                                                          ),
+                                                        ),
+                                                      );
+                                                    }));
+                                                  }),
+                                              SizedBox(width: 20),
+                                              Container(
+                                                width: screenWidth * 0.2,
+                                                child: Column(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceEvenly,
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment.start,
+                                                  children: [
+                                                    Text(
+                                                        "Yield: ${recipeData!.yieldValue}",
+                                                        style: TextStyle(
+                                                            fontSize: 14)),
+                                                    SizedBox(
+                                                        //width: 80,
+                                                        child: Text(
+                                                            "Time: ${getCleanNumber(recipeData!.time).toString()} ${getTimeUnit()}",
+                                                            style: TextStyle(
+                                                                fontSize: 14))),
+                                                    SizedBox(height: 20),
+                                                    SizedBox(
+                                                      width: 120,
+                                                      height: 40,
+                                                      child: OutlinedButton(
+                                                        onPressed: () async {
+                                                          showDialog(
+                                                              context: context,
+                                                              builder:
+                                                                  (BuildContext
+                                                                      context) {
+                                                                return AlertDialog(
+                                                                  scrollable:
+                                                                      true,
+                                                                  title: Text(
+                                                                      'Notes'),
+                                                                  content:
+                                                                      Container(
+                                                                    decoration:
+                                                                        BoxDecoration(
+                                                                            border:
+                                                                                Border.all()),
+                                                                    child:
+                                                                        Padding(
+                                                                      padding: const EdgeInsets
+                                                                          .all(
+                                                                          12.0),
+                                                                      child:
+                                                                          Form(
+                                                                        child:
+                                                                            Column(
+                                                                          children: <Widget>[
+                                                                            Align(
+                                                                              alignment: Alignment.topLeft,
+                                                                              child: Container(width: screenWidth * 0.7, child: Text(recipeData!.notes != null ? recipeData!.notes!.capitalize() : "No notes", style: TextStyle(fontSize: 14))),
+                                                                            ),
+                                                                          ],
+                                                                        ),
+                                                                      ),
+                                                                    ),
+                                                                  ),
+                                                                  actions: [
+                                                                    ElevatedButton(
+                                                                        child: Text(
+                                                                            "Done"),
+                                                                        onPressed:
+                                                                            () {
+                                                                          Navigator.of(context)
+                                                                              .pop();
+                                                                        })
+                                                                  ],
+                                                                );
+                                                              });
+                                                        },
+                                                        child: Text("Notes"),
                                                       ),
-                                                      Column(children: [
-                                                        Row(
-                                                          mainAxisAlignment:
-                                                              MainAxisAlignment
-                                                                  .spaceBetween,
-                                                          children: [
-                                                            Text(
-                                                                getCleanNumber(recipeData!
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              //Spacer(),
+                                              Expanded(
+                                                child: Column(
+                                                  children: [
+                                                    Container(
+                                                        alignment: Alignment
+                                                            .centerLeft,
+                                                        child: Text(
+                                                            "Ingredients List:",
+                                                            style: TextStyle(
+                                                                fontSize: 15,
+                                                                fontWeight:
+                                                                    FontWeight
+                                                                        .bold))),
+                                                    SizedBox(
+                                                      height: screenHeight * 0.2,
+                                                      child: ListView.builder(
+                                                        /*physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,*/
+                                                        //padding: EdgeInsets.all(16.0),
+                                                        itemCount: recipeData!
+                                                            .ingredientList!
+                                                            .length,
+                                                        itemBuilder:
+                                                            (BuildContext
+                                                                    context,
+                                                                int index) {
+                                                          return Row(
+                                                            mainAxisAlignment:
+                                                                MainAxisAlignment
+                                                                    .spaceBetween,
+                                                            children: [
+                                                              Flexible(
+                                                                //width: 200,
+                                                                child: Text(
+                                                                    recipeData!
                                                                         .ingredientList![
                                                                             index]
-                                                                        .amount)
-                                                                    .toString(),
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14)),
-                                                            SizedBox(
-                                                              width: 20,
-                                                            ),
-                                                            Text(
-                                                                recipeData!
-                                                                    .ingredientList![
-                                                                        index]
-                                                                    .unit,
-                                                                style: TextStyle(
-                                                                    fontSize:
-                                                                        14))
-                                                          ],
-                                                        ),
-                                                      ]),
-                                                    ],
-                                                  );
-                                                },
+                                                                        .ingredientName
+                                                                        .capitalize(),
+                                                                    style: TextStyle(
+                                                                        fontSize:
+                                                                            14)),
+                                                              ),
+                                                              Column(children: [
+                                                                Row(
+                                                                  mainAxisAlignment:
+                                                                      MainAxisAlignment
+                                                                          .spaceBetween,
+                                                                  children: [
+                                                                    Text(
+                                                                        getCleanNumber(recipeData!.ingredientList![index].amount)
+                                                                            .toString(),
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                14)),
+                                                                    SizedBox(
+                                                                      width: 20,
+                                                                    ),
+                                                                    Text(
+                                                                        recipeData!
+                                                                            .ingredientList![
+                                                                                index]
+                                                                            .unit,
+                                                                        style: TextStyle(
+                                                                            fontSize:
+                                                                                14))
+                                                                  ],
+                                                                ),
+                                                              ]),
+                                                            ],
+                                                          );
+                                                        },
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
                                               ),
+                                            ],
+                                          ),
+                                          SizedBox(height: 30),
+                                          Container(
+                                              alignment: Alignment.centerLeft,
+                                              child: Text("Procedure:",
+                                                  style: TextStyle(
+                                                      fontSize: 15,
+                                                      fontWeight:
+                                                          FontWeight.bold))),
+                                          SizedBox(
+                                            //width: 200,
+                                            //height: screenHeight * 0.15,
+                                            child: ListView.builder(
+                                              physics:
+                                                  NeverScrollableScrollPhysics(),
+                                              shrinkWrap: true,
+                                              padding: EdgeInsets.all(16.0),
+                                              itemCount:
+                                                  recipeData!.stepList!.length,
+                                              itemBuilder:
+                                                  (BuildContext context,
+                                                      int index) {
+                                                return ListTile(
+                                                    leading: Text(
+                                                        recipeData!
+                                                            .stepList![index]
+                                                            .sequence
+                                                            .toString(),
+                                                        style: TextStyle(
+                                                            fontSize: 14)),
+                                                    title: Text(
+                                                        recipeData!
+                                                            .stepList![index]
+                                                            .description
+                                                            .capitalize(),
+                                                        style: TextStyle(
+                                                            fontSize: 14)));
+                                              },
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                  Spacer(),
-                                  Container(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Procedure:",
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              fontWeight: FontWeight.bold))),
-                                  SizedBox(
-                                    //width: 200,
-                                    height: screenHeight * 0.15,
-                                    child: ListView.builder(
-                                      padding: EdgeInsets.all(16.0),
-                                      itemCount: recipeData!.stepList!.length,
-                                      itemBuilder:
-                                          (BuildContext context, int index) {
-                                        return ListTile(
-                                            leading: Text(
-                                                recipeData!
-                                                    .stepList![index].sequence
-                                                    .toString(),
-                                                style: TextStyle(fontSize: 14)),
-                                            title: Text(
-                                                recipeData!.stepList![index]
-                                                    .description
-                                                    .capitalize(),
-                                                style:
-                                                    TextStyle(fontSize: 14)));
-                                      },
-                                    ),
-                                  ),
-                                  Spacer(),
-                                  Align(
-                                    alignment: Alignment.bottomCenter,
-                                    child: Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceEvenly,
-                                      children: [
-                                        SizedBox(
-                                          height: 40,
-                                          width: 100,
-                                          child: FloatingActionButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            EditFormPage(
-                                                                recipeId: widget
-                                                                    .recipeId,
-                                                                catagoryId: widget
-                                                                    .catagoryId)));
-                                              });
-                                            },
-                                            child: Text("Edit"),
                                           ),
-                                        ),
-                                        //Spacer(),
-                                        SizedBox(
-                                          height: 40,
-                                          width: 100,
-                                          child: FloatingActionButton(
-                                            onPressed: () {
-                                              setState(() {
-                                                recipeData!.deleteRecipeInfo(
-                                                    recipeData!.id);
-                                                if (recipeData!.imageName !=
-                                                    null) {
-                                                  recipeImg.delete();
-                                                } else {}
-                                                Navigator.of(context).push(
-                                                    MaterialPageRoute(
-                                                        builder: (context) =>
-                                                            CatagoryPage(
-                                                                catagoryId: widget
-                                                                    .catagoryId)));
-                                              });
-                                            },
-                                            child: Text("Delete"),
-                                          ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  SizedBox(height: 30),
-                                ],
-                              )
-                              )
-                      )
-                              )));
+                                        ],
+                                      ))))
+                                      ));
           });
         }
       },
@@ -820,9 +775,31 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
             },
           ),
           actions: [
-            IconButton(
-                icon: Icon(Icons.send),
-                onPressed: () {
+            PopupMenuButton<Menu>(
+              icon: Icon(Icons.more_horiz),
+              onSelected: (Menu item) async {
+                Recipe recipeInfo = await getRecipe();
+                File recipeImg = File(path.join(documentDirectory!.path,
+                        'image', recipeInfo.id.toString()) +
+                    recipeInfo.imageName.toString());
+                if (item == Menu.edit) {
+                  setState(() {
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => EditFormPage(
+                            recipeId: widget.recipeId,
+                            catagoryId: widget.catagoryId)));
+                  });
+                } else if (item == Menu.delete) {
+                  setState(() {
+                    recipeData!.deleteRecipeInfo(recipeData!.id);
+                    if (recipeData!.imageName != null) {
+                      recipeImg.delete();
+                    } else {}
+                    Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) =>
+                            CatagoryPage(catagoryId: widget.catagoryId)));
+                  });
+                } else {
                   showDialog(
                       context: context,
                       builder: (BuildContext context) {
@@ -860,7 +837,6 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                 ElevatedButton(
                                     child: Text("Send"),
                                     onPressed: () async {
-                                      Recipe recipeInfo = await getRecipe();
                                       for (Ingredient ingredient
                                           in recipeInfo.ingredientList!) {
                                         ingredientEmailList.add(
@@ -870,11 +846,6 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                           in recipeInfo.stepList!) {
                                         stepsEmailList.add(step.description);
                                       }
-                                      File recipeImg = File(path.join(
-                                              documentDirectory!.path,
-                                              'image',
-                                              recipeInfo.id.toString()) +
-                                          recipeInfo.imageName.toString());
                                       setState(() {
                                         sendRecipeViaEmail(
                                             recipeInfo.name,
@@ -893,7 +864,32 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                           ],
                         );
                       });
-                })
+                }
+              },
+              itemBuilder: (BuildContext context) => <PopupMenuEntry<Menu>>[
+                const PopupMenuItem<Menu>(
+                  value: Menu.edit,
+                  child: ListTile(
+                    leading: Icon(Icons.edit),
+                    title: Text('Edit'),
+                  ),
+                ),
+                const PopupMenuItem<Menu>(
+                  value: Menu.delete,
+                  child: ListTile(
+                    leading: Icon(Icons.delete),
+                    title: Text('Delete'),
+                  ),
+                ),
+                const PopupMenuItem<Menu>(
+                  value: Menu.share,
+                  child: ListTile(
+                    leading: Icon(Icons.send),
+                    title: Text('Share'),
+                  ),
+                ),
+              ],
+            )
           ],
         ),
         body: recipeWidget());
