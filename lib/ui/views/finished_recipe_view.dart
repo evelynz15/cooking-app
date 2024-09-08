@@ -1,3 +1,5 @@
+import 'dart:ui';
+
 import 'package:cookingapp/models/step.dart';
 import 'package:cookingapp/ui/views/add_recipe_view.dart';
 import 'package:cookingapp/ui/views/edit_recipe_view.dart';
@@ -7,6 +9,7 @@ import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:cookingapp/ui/views/catagory_view.dart';
 import 'package:cookingapp/models/recipe.dart';
 import 'package:cookingapp/models/ingredient.dart';
+import 'package:flutter/widgets.dart';
 import 'dart:developer';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -165,7 +168,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
             final orientation = MediaQuery.of(context).orientation;  
             return 
                  Center(
-                    child: SafeArea(
+                   // child: SafeArea(
                         child: SingleChildScrollView(
                           child: Padding(
                 padding: const EdgeInsets.only(left: 20, right: 20, top: 20),
@@ -331,7 +334,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                               ),
                                             ],
                                           ),
-                                          SizedBox(height: 30),
+                                          //SizedBox(height: 30),
                                           Container(
                                               alignment: Alignment.centerLeft,
                                               child: const Text(
@@ -340,13 +343,14 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                       fontSize: 15,
                                                       fontWeight:
                                                           FontWeight.bold))),
-                                          Flexible(child: 
+                                          SizedBox(
+                                            child: 
                                             ListView.builder(
                                               physics:
-                                                  NeverScrollableScrollPhysics(),
+                                                  const NeverScrollableScrollPhysics(),
                                               shrinkWrap: true,
                                              // itemExtent: 40.0,
-                                              padding: EdgeInsets.all(16.0),
+                                              padding: const EdgeInsets.all(16.0),
                                               itemCount: recipeData!
                                                   .ingredientList!.length,
                                               prototypeItem: const Row(children: [Text("")],),
@@ -366,7 +370,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                   index]
                                                               .ingredientName
                                                               .capitalize(),
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                               fontSize: 14)),
                                                     ),
                                                     Column(
@@ -408,37 +412,45 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                               },
                                             ),
                                           ),
-                                          SizedBox(height: 30),
+                                          //SizedBox(height: 30),
                                           Container(
                                               alignment: Alignment.centerLeft,
-                                              child: Text("Procedure:",
+                                              child: const Text("Procedure:",
                                                   style: TextStyle(
                                                       fontSize: 15,
                                                       fontWeight:
                                                           FontWeight.bold))),
-                                          Column(
+                                          Flexible(
                                               //width: 200,
                                               //height: screenHeight * 0.15,
-                                              children: [
-                                                ListView.builder(
-                                                  physics:
-                                                      NeverScrollableScrollPhysics(),
-                                                  shrinkWrap: true,
-                                                  padding: EdgeInsets.all(16.0),
-                                                  itemCount: recipeData!
-                                                      .stepList!.length,
-                                                  itemBuilder:
-                                                      (BuildContext context,
-                                                          int index) {
+                                             // children: [
+                                               child: ListView(
+                              //shrinkWrap: true,
+                              //physics: NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(16.0),
+                              children: List.generate(
+                                recipeData!.stepList!.length,
+                                (int index) {
+                                                 // physics:
+                                                 //     NeverScrollableScrollPhysics(),
+                                              //    shrinkWrap: true,
+                                             //     padding: EdgeInsets.all(16.0),
+                                            //      itemCount: recipeData!
+                                             //         .stepList!.length,
+                                            //      itemBuilder:
+                                           //           (BuildContext context,
+                                            //              int index) {
                                                     return ListTile(
+                                                      titleAlignment: ListTileTitleAlignment.top,
                                                         leading: Text(
+                                                          textAlign: TextAlign.center,
                                                             recipeData!
                                                                 .stepList![
                                                                     index]
                                                                 .sequence
                                                                 .toString(),
-                                                            style: TextStyle(
-                                                                fontSize: 14)),
+                                                            style: const TextStyle(
+                                                                fontSize: 14, )),
                                                         title: Text(
                                                             recipeData!
                                                                 .stepList![
@@ -449,13 +461,17 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                 fontSize: 14)));
                                                   },
                                                 ),
-                                              ]),
+                                    )
+                                  //  ]
+                                    ),
                                         ],
                                       )
-                                    : Column(
+                                    : Padding(
+                                      padding:  const EdgeInsets.all(16),
+                                      child: Column(
                                         children: [
                                           Text(recipeData!.name.capitalize(),
-                                              style: TextStyle(
+                                              style: const TextStyle(
                                                   fontSize: 18,
                                                   fontWeight: FontWeight.bold)),
                                           SizedBox(height: 10),
@@ -699,13 +715,13 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                       fontSize: 15,
                                                       fontWeight:
                                                           FontWeight.bold))),
-                                          SizedBox(
+                                          Flexible(
                                             //width: 200,
                                             //height: screenHeight * 0.15,
                                             child: ListView.builder(
-                                              physics:
-                                                  NeverScrollableScrollPhysics(),
-                                              shrinkWrap: true,
+                                             // physics:
+                                             //     NeverScrollableScrollPhysics(),
+                                            //  shrinkWrap: true,
                                               padding: EdgeInsets.all(16.0),
                                               itemCount:
                                                   recipeData!.stepList!.length,
@@ -713,6 +729,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                   (BuildContext context,
                                                       int index) {
                                                 return ListTile(
+                                                  titleAlignment: ListTileTitleAlignment.top,
                                                     leading: Text(
                                                         recipeData!
                                                             .stepList![index]
@@ -731,8 +748,10 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                             ),
                                           ),
                                         ],
-                                      ))))
-                                      ));
+                                      )
+                          ))))
+                                   //   )
+                                      );
           });
         }
       },
