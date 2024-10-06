@@ -8,6 +8,9 @@ import 'dart:developer';
 import 'package:path_provider/path_provider.dart';
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:cookingapp/models/recipe.dart';
+import 'package:cookingapp/models/ingredient.dart';
+import 'package:cookingapp/models/step.dart';
 
 class SettingView extends StatefulWidget {
   const SettingView({super.key});
@@ -59,17 +62,17 @@ class _SettingViewState extends State<SettingView> {
   }
 
   Future<void> onDeleteButtonPressed() async {
-      DbHelper dbClient = DbHelper();
-      await dbClient.resetDatabase();
-      if (context.mounted) {
-        Navigator.of(context).pop();
-        showDialog(
+    DbHelper dbClient = DbHelper();
+    await dbClient.resetDatabase();
+    if (context.mounted) {
+      Navigator.of(context).pop();
+      showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertDialog(content: Text("Data reset"));
           });
-      }
     }
+  }
 
   Future<void> onContinueDataRestorePressed(result) async {
     File source = File(result.files.single.path!);
@@ -90,6 +93,36 @@ class _SettingViewState extends State<SettingView> {
           });
       return File(DbHelper.dbPath);
     });
+  }
+
+  Future<int> onImportRecipePressed(result) async {
+    File source = File(result.files.single.path!);
+    final contents = await source.readAsString();
+    Recipe recipe = Recipe.fromJson(contents);
+    int recipeId = await recipe.insertRecipe();
+
+    List<int> ingredientIds = [];
+    for (int i = 0; i < recipe.ingredientList!.length; i++) {
+      Ingredient ingredient = Ingredient(
+          recipeId: recipeId,
+          ingredientName: recipe.ingredientList![i].ingredientName,
+          amount: recipe.ingredientList![i].amount,
+          unit: recipe.ingredientList![i].unit,
+          sequence: i + 1);
+      ingredientIds.add(await ingredient.insertIngredient());
+    }
+
+    List<int> stepIds = [];
+    for (int i = 0; i < recipe.stepList!.length; i++) {
+      recipeStep step = recipeStep(
+        recipeId: recipeId,
+        sequence: i + 1,
+        description: recipe.stepList![i].description,
+      );
+      stepIds.add(await step.insertStep());
+    }
+
+    return recipe.catagoryId;
   }
 
   /*Future<void> onContinueButtonPressed() async {
@@ -247,7 +280,75 @@ class _SettingViewState extends State<SettingView> {
                   },
                   initialValue: isOnboardingComplete == false ? false : true,
                   activeSwitchColor: Colors.green,
-                )
+                ),
+                SettingsTile(
+                  title: const Text('Import recipe'),
+                  leading:
+                      const Icon(Icons.import_contacts, color: Colors.green),
+                  onPressed: (BuildContext context) async {
+                    FilePickerResult? result =
+                        await FilePicker.platform.pickFiles();
+
+                    if (result != null && context.mounted) {
+                      showDialog(
+                          context: context,
+                          builder: (BuildContext context) {
+                            return AlertDialog(
+                              scrollable: true,
+                              title: Text('Import Recipe'),
+                              content: Container(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(12.0),
+                                  child: Form(
+                                    child: Column(
+                                      children: <Widget>[
+                                        Align(
+                                          alignment: Alignment.topLeft,
+                                          child: Container(
+                                              height: 100,
+                                              child: FittedBox(
+                                                fit: BoxFit.cover,
+                                                child: Text(
+                                                  "Recipe data in this file will be imported into its original catagory."
+                                                  "Its image will not be automatically imported, but you can find the image file for the recipe in the email shared to you",
+                                                ),
+                                              )),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              actions: [
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    ElevatedButton(
+                                        child: Text("Cancel"),
+                                        onPressed: () {
+                                          Navigator.of(context).pop();
+                                        }),
+                                    ElevatedButton(
+                                        child: Text("Restore"),
+                                        onPressed: () async {
+                                          int catagoryId = await onImportRecipePressed(result);
+                                          setState(() {
+                                            
+                                            Navigator.pushNamed(context, 'catagory',
+                    arguments: {"catagoryId": catagoryId});
+                                          });
+                                        }),
+                                  ],
+                                )
+                              ],
+                            );
+                          });
+                    } else {
+                      // User canceled the picker
+                    }
+                  },
+                ),
               ],
             ),
             SettingsSection(
@@ -274,8 +375,7 @@ class _SettingViewState extends State<SettingView> {
                                         child: Container(
                                             height: 100,
                                             child: Text(
-                                              "All the data you have entered or collected in this app will be deleted, and the app will be restored to initial setup. Are you sure you want to reset the data to its initial setup?"
-                                            )),
+                                                "All the data you have entered or collected in this app will be deleted, and the app will be restored to initial setup. Are you sure you want to reset the data to its initial setup?")),
                                       ),
                                     ],
                                   ),

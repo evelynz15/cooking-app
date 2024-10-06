@@ -286,6 +286,7 @@ class _EditFormPageState extends State<EditFormPage> {
                               selectedImageSource = item;
                               _imageName = path.basename(image.path);
                               isImageChanged = true;
+                          
                             });
                           },
                           itemBuilder: (BuildContext context) =>

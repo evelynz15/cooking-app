@@ -385,6 +385,8 @@ class _FormPageState extends State<FormPage> {
                     _image = tempImage;
                     selectedImageSource = item;
                     _imageName = path.basename(image.path);
+                    log("image path in add recipe page - ${image.path}");
+                    log("image name in add recipe page - $_imageName");
                   });
                 },
                 itemBuilder: (BuildContext context) =>

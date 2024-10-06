@@ -40,6 +40,23 @@ class Ingredient {
     };
   }
 
+  /*factory Ingredient.fromJson(Map<String, dynamic> json) {
+      final id = json['id'] as int?;
+      final recipeId = json['recipe_id'] as int;
+      final ingredientName = json['ingredient_name'] as String;
+      final amount = json['amount'] as double;
+      final unit = json['unit'] as String;
+      final sequence = json['sequence'] as int;
+      return Ingredient(
+        id: id,
+        recipeId: recipeId,
+        ingredientName: ingredientName,
+        amount: amount,
+        unit: unit,
+        sequence: sequence
+        );
+  }*/
+
 
   Future<int> insertIngredient() async {
     DbHelper db = DbHelper();
