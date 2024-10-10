@@ -77,12 +77,18 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
     List<String> stepsEmailList = [];
     String ingredientsListed = """""";
     String stepsListed = """""";
+    String ingredientUnit = "";
 
     File getJsonFile = await recipe.toJson();
 
     for (Ingredient ingredient in recipe.ingredientList!) {
+      if (ingredient.unit == "n/a") {
+              ingredientUnit = "";
+            } else {
+              ingredientUnit = ingredient.unit;
+            }
       ingredientEmailList.add(
-          "${ingredient.amount} ${ingredient.unit} ${ingredient.ingredientName}");
+          "${ingredient.amount} ${ingredientUnit} ${ingredient.ingredientName}");
     }
     for (recipeStep step in recipe.stepList!) {
       stepsEmailList.add(step.description);

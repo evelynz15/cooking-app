@@ -156,7 +156,7 @@ class _SettingViewState extends State<SettingView> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             scrollable: true,
-                            title: Text('Backup to Email'),
+                            title: Text('Backup to Email', style: TextStyle(fontSize: 16)),
                             content: Container(
                               child: Padding(
                                 padding: const EdgeInsets.all(12.0),
@@ -170,6 +170,7 @@ class _SettingViewState extends State<SettingView> {
                                             child: Text(
                                               "The Mail app will be launched with a backup of your app data file attached to a new message. "
                                               "You will have the option to choose which email you want to send your data to.",
+                                              style: TextStyle(fontSize: 10)
                                             )),
                                       ),
                                     ],
@@ -214,7 +215,7 @@ class _SettingViewState extends State<SettingView> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               scrollable: true,
-                              title: Text('Restore Data'),
+                              title: Text('Restore Data', style: TextStyle(fontSize: 16)),
                               content: Container(
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
@@ -229,6 +230,7 @@ class _SettingViewState extends State<SettingView> {
                                                 "All data (like recipe information) you have entered"
                                                 "and stored in this app will be replaced "
                                                 "with the data in this backup file. This cannot be undone. Do you want to continue?",
+                                                style: TextStyle(fontSize: 10)
                                               )),
                                         ),
                                       ],
@@ -295,7 +297,7 @@ class _SettingViewState extends State<SettingView> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               scrollable: true,
-                              title: Text('Import Recipe'),
+                              title: Text('Import Recipe', style: TextStyle(fontSize: 16)),
                               content: Container(
                                 child: Padding(
                                   padding: const EdgeInsets.all(12.0),
@@ -306,13 +308,12 @@ class _SettingViewState extends State<SettingView> {
                                           alignment: Alignment.topLeft,
                                           child: Container(
                                               height: 100,
-                                              child: FittedBox(
-                                                fit: BoxFit.cover,
                                                 child: Text(
                                                   "Recipe data in this file will be imported into its original catagory."
-                                                  "Its image will not be automatically imported, but you can find the image file for the recipe in the email shared to you",
+                                                  " Its image will not be automatically imported, but you can find the image file for the recipe in the email shared to you",
+                                                  style: TextStyle(fontSize: 9)
                                                 ),
-                                              )),
+                                              ),
                                         ),
                                       ],
                                     ),
@@ -363,7 +364,7 @@ class _SettingViewState extends State<SettingView> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             scrollable: true,
-                            title: Text('Data Reset'),
+                            title: Text('Data Reset', style: TextStyle(fontSize: 16)),
                             content: Container(
                               child: Padding(
                                 padding: const EdgeInsets.all(12.0),
@@ -375,7 +376,9 @@ class _SettingViewState extends State<SettingView> {
                                         child: Container(
                                             height: 100,
                                             child: Text(
-                                                "All the data you have entered or collected in this app will be deleted, and the app will be restored to initial setup. Are you sure you want to reset the data to its initial setup?")),
+                                                "All the data you have entered or collected in this app will be deleted, and the app will be restored to initial setup. Are you sure you want to reset the data to its initial setup?",
+                                                style: TextStyle(fontSize: 10)
+                                                )),
                                       ),
                                     ],
                                   ),
