@@ -1,11 +1,8 @@
 import 'package:cookingapp/ui/views/onboard_screen.dart';
 import 'package:cookingapp/ui/views/setting_view.dart';
 import 'package:flutter/material.dart';
-import 'package:cookingapp/ui/views/catagory_view.dart';
-import 'package:cookingapp/ui/router.dart';
 import 'package:cookingapp/services/db_helper.dart';
 import 'package:cookingapp/models/recipe.dart';
-import 'package:cookingapp/ui/views/recipe_stepper/recipe_stepper_view.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key, required this.title});
@@ -16,7 +13,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _selectedIndex = 0;
+  final int _selectedIndex = 0;
 
   Map<int, String> catagoryNames = {
     0: "APPETIZERS",
@@ -173,7 +170,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           decoration: BoxDecoration(
                             color: Theme.of(context).colorScheme.inversePrimary,
                           ),
-                          child: Padding(
+                          child: const Padding(
                             padding: EdgeInsets.only(top: 10),
                             child: Text("What's Cooking?")),
                         ),
@@ -233,19 +230,19 @@ class _MyHomePageState extends State<MyHomePage> {
                       title: const Text('Onboarding'),
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => OnboardScreen()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const OnboardScreen()));
                       },
                     ),
                       ],
                     ),
                   ),
                   Padding(
-                    padding: EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.only(bottom: 10),
                     child: ListTile(
                       title: const Text('Settings'),
                       onTap: () {
                         Navigator.pop(context);
-                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => SettingView()));
+                        Navigator.of(context).push(MaterialPageRoute(builder: (context) => const SettingView()));
                       },
                     ),
                   ),
@@ -260,7 +257,7 @@ class _MyHomePageState extends State<MyHomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: <Widget>[
                 searchBarWidget(),
-                SizedBox(height: 50),
+                const SizedBox(height: 50),
                 Expanded(
                   child: ListView.separated(
                     padding: const EdgeInsets.all(8),
@@ -288,7 +285,7 @@ class _MyHomePageState extends State<MyHomePage> {
       onTap: () {
         navigateToCatagory(catagoryId);
       },
-      child: Container(
+      child: SizedBox(
         width: 400,
         height: 150,
         child: Card(
@@ -304,7 +301,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
               ),*/
               Padding(
-                  padding: EdgeInsets.all(20.0),
+                  padding: const EdgeInsets.all(20.0),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
@@ -317,7 +314,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         child: Text(
                           catagoryName,
                           textAlign: TextAlign.center,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 22, // Adjust size as needed
                             fontWeight: FontWeight.bold,
                             color: Colors.black,

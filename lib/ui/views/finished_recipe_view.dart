@@ -1,25 +1,18 @@
-import 'dart:ui';
 
 import 'package:cookingapp/models/step.dart';
-import 'package:cookingapp/ui/views/add_recipe_view.dart';
-import 'package:cookingapp/ui/views/edit_recipe_view.dart';
 import 'package:cookingapp/ui/views/image_hero.dart';
 import 'package:flutter/material.dart';
-import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:cookingapp/ui/views/catagory_view.dart';
 import 'package:cookingapp/models/recipe.dart';
 import 'package:cookingapp/models/ingredient.dart';
-import 'package:flutter/widgets.dart';
 import 'dart:developer';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
-import 'package:cookingapp/ui/router.dart';
 import 'package:cookingapp/ui/views/recipe_stepper_edit_view.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:flutter/cupertino.dart';
-import 'dart:convert';
 
 enum Menu { edit, delete, share }
 
@@ -88,18 +81,18 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
               ingredientUnit = ingredient.unit;
             }
       ingredientEmailList.add(
-          "${ingredient.amount} ${ingredientUnit} ${ingredient.ingredientName}");
+          "${ingredient.amount} $ingredientUnit ${ingredient.ingredientName}");
     }
     for (recipeStep step in recipe.stepList!) {
       stepsEmailList.add(step.description);
     }
 
     for (String ingredient in ingredientEmailList) {
-      ingredientsListed = ingredientsListed + "${ingredient}\n";
+      ingredientsListed = "$ingredientsListed$ingredient\n";
     }
 
     for (String step in stepsEmailList) {
-      stepsListed = stepsListed + "${step}\n";
+      stepsListed = "$stepsListed$step\n";
     }
 
     final Email email = Email(
@@ -111,7 +104,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
       Yield: ${recipe.yieldValue}
       Time: ${recipe.time}
 
-      Notes: ${recipe.notes != null ? recipe.notes : "no notes"}
+      Notes: ${recipe.notes ?? "no notes"}
 
       Ingredients:
       $ingredientsListed
@@ -143,7 +136,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
   Future<Recipe> getRecipe() async {
     documentDirectory = await getApplicationDocumentsDirectory();
     recipeData = await Recipe.getRecipeById(widget.recipeId);
-    log('test -' + recipeData!.stepList![0].description);
+    log('test -${recipeData!.stepList![0].description}');
     return recipeData!;
   }
 
@@ -242,7 +235,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                               .colorScheme
                                                               .inversePrimary,
                                                       title:
-                                                          Text("Recipe Image"),
+                                                          const Text("Recipe Image"),
                                                     ),
                                                     body: Center(
                                                       child: Container(
@@ -415,17 +408,17 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                               index]
                                                                           .amount)
                                                                       .toString(),
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontSize:
                                                                           14)),
                                                             ),
-                                                            SizedBox(width: 20),
+                                                            const SizedBox(width: 20),
                                                             SizedBox(
                                                               width: 50,
                                                               child: Text(
                                                                   getIngredientUnit(
                                                                       index),
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontSize:
                                                                           14)),
                                                             ),
@@ -485,7 +478,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                           .stepList![index]
                                                           .description
                                                           .capitalize(),
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 14)));
                                             },
                                           ),
@@ -503,7 +496,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                             style: const TextStyle(
                                                 fontSize: 18,
                                                 fontWeight: FontWeight.bold)),
-                                        SizedBox(height: 10),
+                                        const SizedBox(height: 10),
                                         Row(
                                           mainAxisAlignment:
                                               MainAxisAlignment.spaceEvenly,
@@ -532,7 +525,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                             Theme.of(context)
                                                                 .colorScheme
                                                                 .inversePrimary,
-                                                        title: Text(
+                                                        title: const Text(
                                                             "Recipe Image"),
                                                       ),
                                                       body: Center(
@@ -572,8 +565,8 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                     );
                                                   }));
                                                 }),
-                                            SizedBox(width: 20),
-                                            Container(
+                                            const SizedBox(width: 20),
+                                            SizedBox(
                                               width: screenWidth * 0.2,
                                               child: Column(
                                                 mainAxisAlignment:
@@ -584,15 +577,15 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                 children: [
                                                   Text(
                                                       "Yield: ${recipeData!.yieldValue}",
-                                                      style: TextStyle(
+                                                      style: const TextStyle(
                                                           fontSize: 14)),
                                                   SizedBox(
                                                       //width: 80,
                                                       child: Text(
                                                           "Time: ${getCleanNumber(recipeData!.time).toString()} ${getTimeUnit()}",
-                                                          style: TextStyle(
+                                                          style: const TextStyle(
                                                               fontSize: 14))),
-                                                  SizedBox(height: 20),
+                                                  const SizedBox(height: 20),
                                                   SizedBox(
                                                     width: 120,
                                                     height: 40,
@@ -606,7 +599,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                               return AlertDialog(
                                                                 scrollable:
                                                                     true,
-                                                                title: Text(
+                                                                title: const Text(
                                                                     'Notes'),
                                                                 content:
                                                                     Container(
@@ -628,7 +621,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                             alignment:
                                                                                 Alignment.topLeft,
                                                                             child:
-                                                                                Container(width: screenWidth * 0.7, child: Text(recipeData!.notes != null ? recipeData!.notes!.capitalize() : "No notes", style: TextStyle(fontSize: 14))),
+                                                                                SizedBox(width: screenWidth * 0.7, child: Text(recipeData!.notes != null ? recipeData!.notes!.capitalize() : "No notes", style: const TextStyle(fontSize: 14))),
                                                                           ),
                                                                         ],
                                                                       ),
@@ -637,7 +630,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                 ),
                                                                 actions: [
                                                                   ElevatedButton(
-                                                                      child: Text(
+                                                                      child: const Text(
                                                                           "Done"),
                                                                       onPressed:
                                                                           () {
@@ -648,7 +641,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                               );
                                                             });
                                                       },
-                                                      child: Text("Notes"),
+                                                      child: const Text("Notes"),
                                                     ),
                                                   ),
                                                 ],
@@ -661,7 +654,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                   Container(
                                                       alignment:
                                                           Alignment.centerLeft,
-                                                      child: Text(
+                                                      child: const Text(
                                                           "Ingredients List:",
                                                           style: TextStyle(
                                                               fontSize: 15,
@@ -694,7 +687,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                           index]
                                                                       .ingredientName
                                                                       .capitalize(),
-                                                                  style: TextStyle(
+                                                                  style: const TextStyle(
                                                                       fontSize:
                                                                           14)),
                                                             ),
@@ -710,10 +703,10 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                                   index]
                                                                               .amount)
                                                                           .toString(),
-                                                                      style: TextStyle(
+                                                                      style: const TextStyle(
                                                                           fontSize:
                                                                               14)),
-                                                                  SizedBox(
+                                                                  const SizedBox(
                                                                     width: 20,
                                                                   ),
                                                                   Text(
@@ -721,7 +714,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                                           .ingredientList![
                                                                               index]
                                                                           .unit,
-                                                                      style: TextStyle(
+                                                                      style: const TextStyle(
                                                                           fontSize:
                                                                               14))
                                                                 ],
@@ -737,10 +730,10 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                             ),
                                           ],
                                         ),
-                                        SizedBox(height: 30),
+                                        const SizedBox(height: 30),
                                         Container(
                                             alignment: Alignment.centerLeft,
-                                            child: Text("Procedure:",
+                                            child: const Text("Procedure:",
                                                 style: TextStyle(
                                                     fontSize: 15,
                                                     fontWeight:
@@ -753,7 +746,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                               // physics:
                                               //     NeverScrollableScrollPhysics(),
                                               //  shrinkWrap: true,
-                                              padding: EdgeInsets.all(16.0),
+                                              padding: const EdgeInsets.all(16.0),
                                               itemCount:
                                                   recipeData!.stepList!.length,
                                               itemBuilder:
@@ -768,14 +761,14 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                                                             .stepList![index]
                                                             .sequence
                                                             .toString(),
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 14)),
                                                     title: Text(
                                                         recipeData!
                                                             .stepList![index]
                                                             .description
                                                             .capitalize(),
-                                                        style: TextStyle(
+                                                        style: const TextStyle(
                                                             fontSize: 14)));
                                               },
                                             ),
@@ -815,7 +808,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
           title: Text(catagoryName!),
           leading: IconButton(
-            icon: Icon(Icons.arrow_back),
+            icon: const Icon(Icons.arrow_back),
             onPressed: () {
               setState(() {
                 Navigator.pushNamed(context, 'catagory',
@@ -825,7 +818,7 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
           ),
           actions: [
             PopupMenuButton<Menu>(
-              icon: Icon(Icons.more_horiz),
+              icon: const Icon(Icons.more_horiz),
               onSelected: (Menu item) async {
                 Recipe recipeInfo = await getRecipe();
                 File recipeImg = File(path.join(documentDirectory!.path,
@@ -854,16 +847,16 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                       builder: (BuildContext context) {
                         return AlertDialog(
                           scrollable: true,
-                          title: Text('Send Recipe'),
+                          title: const Text('Send Recipe'),
                           content: Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(12.0),
+                            child: const Padding(
+                              padding: EdgeInsets.all(12.0),
                               child: Form(
                                 child: Column(
                                   children: <Widget>[
                                     Align(
                                       alignment: Alignment.topLeft,
-                                      child: Container(
+                                      child: SizedBox(
                                           height: 100,
                                           child: Text(
                                             'All data in this recipe will be emailed to the recipient of your choice. Press "Send" to continue.',
@@ -879,12 +872,12 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 ElevatedButton(
-                                    child: Text("Cancel"),
+                                    child: const Text("Cancel"),
                                     onPressed: () {
                                       Navigator.of(context).pop();
                                     }),
                                 ElevatedButton(
-                                    child: Text("Send"),
+                                    child: const Text("Send"),
                                     onPressed: () async {
                                       setState(() {
                                         sendRecipeViaEmail(recipeInfo);
@@ -929,6 +922,6 @@ class _FinishedRecipeState extends State<FinishedRecipe> {
 
 extension StringExtensions on String {
   String capitalize() {
-    return "${this[0].toUpperCase()}${this.substring(1)}";
+    return "${this[0].toUpperCase()}${substring(1)}";
   }
 }

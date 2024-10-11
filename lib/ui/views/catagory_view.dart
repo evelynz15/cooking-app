@@ -1,15 +1,11 @@
 import 'package:cookingapp/models/recipe.dart';
-import 'package:cookingapp/ui/views/add_recipe_view.dart';
 import 'package:flutter/material.dart';
-import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:cookingapp/ui/views/finished_recipe_view.dart';
 import 'package:cookingapp/services/db_helper.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
 import 'dart:io';
 import 'dart:developer';
-import 'package:cookingapp/ui/router.dart';
-import 'package:cookingapp/ui/views/recipe_stepper/recipe_stepper_view.dart';
 
 class CatagoryPage extends StatefulWidget {
   final int? catagoryId;
@@ -102,10 +98,10 @@ class _CatagoryPageState extends State<CatagoryPage> {
                   File recipeImg = File(path.join(documentDirectory!.path,
                           'image', recipe.id.toString()) +
                       recipe.imageName.toString());
-                  log('image location - ' + recipeImg.path);
+                  log('image location - ${recipeImg.path}');
 
                   return Container(
-                    margin: EdgeInsets.symmetric(horizontal: 20),
+                    margin: const EdgeInsets.symmetric(horizontal: 20),
                     //height: 250,
                     child: InkWell(
                       splashColor: Colors.blue.withAlpha(30),
@@ -140,8 +136,8 @@ class _CatagoryPageState extends State<CatagoryPage> {
                                         ),
                                       )
                                     : SizedBox(
-                                        child: Image.asset(coverIcon),
                                         width: 170,
+                                        child: Image.asset(coverIcon),
                                       ),
                               ),
                             ]),
@@ -150,7 +146,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                             recipe.name.capitalize(),
                             textAlign: TextAlign.center,
                             overflow: TextOverflow.ellipsis,
-                            style: TextStyle(
+                            style: const TextStyle(
                               fontSize: 20, // Adjust size as needed
                               fontWeight: FontWeight.bold,
                               color: Colors.black,
@@ -251,7 +247,7 @@ class _CatagoryPageState extends State<CatagoryPage> {
                   title: Text(
                     catagoryName,
                     textAlign: TextAlign.center,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 50, // Adjust size as needed
                       fontWeight: FontWeight.bold,
                       color: Colors.black,
@@ -266,8 +262,8 @@ class _CatagoryPageState extends State<CatagoryPage> {
                       },
                       elevation: 0,
                       fillColor: Colors.white,
-                      shape: CircleBorder(),
-                      child: Padding(
+                      shape: const CircleBorder(),
+                      child: const Padding(
                         padding: EdgeInsets.all(24),
                         child: Icon(
                           Icons.add,
@@ -334,13 +330,13 @@ class _VerticalNavBarState extends State<VerticalNavBar> {
               );
             },
           ),
-          SizedBox(height: 10),
+          const SizedBox(height: 10),
           RotatedBox(
             quarterTurns: 3,
             child: Text(
               catagoryName!,
               textAlign: TextAlign.center,
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 50, // Adjust size as needed
                 fontWeight: FontWeight.bold,
                 color: Colors.black,
@@ -352,7 +348,7 @@ class _VerticalNavBarState extends State<VerticalNavBar> {
             child: Align(
               alignment: FractionalOffset.bottomCenter,
               child: Padding(
-                padding: EdgeInsets.only(bottom: 50),
+                padding: const EdgeInsets.only(bottom: 50),
                 child: RawMaterialButton(
                   onPressed: () {
                     Navigator.pushNamed(context, 'addRecipe',
@@ -360,8 +356,8 @@ class _VerticalNavBarState extends State<VerticalNavBar> {
                   },
                   elevation: 0,
                   fillColor: Colors.white,
-                  shape: CircleBorder(),
-                  child: Padding(
+                  shape: const CircleBorder(),
+                  child: const Padding(
                     padding: EdgeInsets.all(24),
                     child: Icon(
                       Icons.add,

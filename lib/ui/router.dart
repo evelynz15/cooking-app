@@ -4,11 +4,8 @@ import 'package:cookingapp/ui/views/setting_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:cookingapp/ui/views/catagory_view.dart';
-import 'package:cookingapp/ui/views/add_recipe_view.dart';
 import 'package:cookingapp/ui/views/finished_recipe_view.dart';
 import 'package:cookingapp/ui/views/edit_recipe_view.dart';
-import 'package:cookingapp/ui/views/recipe_stepper/recipe_stepper_view.dart';
-import 'package:cookingapp/ui/views/recipe_stepper_edit_view.dart';
 
 const String initialRoute = "recordInit";
 
@@ -31,9 +28,9 @@ class CookingRouter {
         final Map<String, dynamic> arguments = settings.arguments as Map<String, dynamic>;
         return MaterialPageRoute(builder: (_) => EditRecipePage(recipeId: arguments["recipeId"], catagoryId: arguments['catagoryId'],));
       case 'onBoard':
-        return MaterialPageRoute(builder: (_) => OnboardScreen());
+        return MaterialPageRoute(builder: (_) => const OnboardScreen());
       case 'settings':
-        return MaterialPageRoute(builder: (_) => SettingView());
+        return MaterialPageRoute(builder: (_) => const SettingView());
       default:
         return MaterialPageRoute(
             builder: (_) => Scaffold(

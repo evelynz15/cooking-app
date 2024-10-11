@@ -10,14 +10,13 @@ class CustomInput extends StatelessWidget {
   final bool? mustBeNumber;
   final int? maxLength;
   const CustomInput(
-      {Key? key,
+      {super.key,
       this.onChanged,
       this.hint,
       this.inputBorder,
       this.controller,
       this.mustBeNumber,
-      this.maxLength})
-      : super(key: key);
+      this.maxLength});
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +27,7 @@ class CustomInput extends StatelessWidget {
         maxLength: maxLength,
         maxLines: null,
         keyboardType: mustBeNumber == true
-            ? TextInputType.numberWithOptions(decimal: true)
+            ? const TextInputType.numberWithOptions(decimal: true)
             : null,
         inputFormatters: [
           mustBeNumber == true
@@ -38,7 +37,7 @@ class CustomInput extends StatelessWidget {
         onChanged: onChanged != null ? (v) => onChanged!(v) : null,
         decoration: InputDecoration(
           labelText: hint!,
-          labelStyle: TextStyle(fontSize: 12), 
+          labelStyle: const TextStyle(fontSize: 12), 
           border: inputBorder
           ),
         validator: (String? value) {

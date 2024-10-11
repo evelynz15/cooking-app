@@ -1,22 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'dart:async';
 import 'dart:developer';
 
 final List<OnBoard> demoData = [
-  OnBoard(
+  const OnBoard(
     image: "assets/images/dessert-page-screenshot.jpeg",
     title: "6 Different Recipe Catagories to Choose From",
     description: "Add your own recipes to each using the + button",
   ),
-  OnBoard(
+  const OnBoard(
     image: "assets/images/finished-recipe-top.jpg",
     secondImage: "assets/images/finished-recipe-buttons.jpg",
     title: "Change Your Recipes as You Refine Them",
     description: "Easily update and delete individual recipes",
   ),
-  OnBoard(
+  const OnBoard(
     image: "assets/images/backup-screenshot.png",
     title: "Backup Your Data to Save it Indefinitely.",
     description:
@@ -133,7 +130,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       IconButton(
-                        icon: Icon(Icons.arrow_back_ios),
+                        icon: const Icon(Icons.arrow_back_ios),
                         onPressed: () {
                           onBackButtonPressed();
                         },
@@ -148,7 +145,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
                         ),
                       ),
                       IconButton(
-                        icon: Icon(Icons.arrow_forward_ios),
+                        icon: const Icon(Icons.arrow_forward_ios),
                         onPressed: () {
                           onForwardButtonPressed();
                         },
@@ -168,7 +165,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
                     height: 70, //Get.height * 0.075,
                     width: 200, //Get.width,
                     child: ElevatedButton(
-                        child: Center(
+                        child: const Center(
                           child: Text(
                             "Get Started",
                             style: TextStyle(
@@ -193,7 +190,7 @@ class _OnboardScreenState extends State<OnboardScreen> {
 class OnBoard extends StatelessWidget {
   final String image, title, description;
   final String? secondImage;
-  const OnBoard({
+  const OnBoard({super.key, 
     required this.image,
     this.secondImage,
     required this.title,
@@ -230,6 +227,8 @@ class OnBoard extends StatelessWidget {
                 ),
                 const Spacer(),
                 Container(
+                  decoration: BoxDecoration(
+                      border: Border.all(width: 5, color: Colors.white)),
                   child: secondImage != null
                       ? Column(
                           children: [
@@ -238,8 +237,6 @@ class OnBoard extends StatelessWidget {
                           ],
                         )
                       : Image.asset(image),
-                  decoration: BoxDecoration(
-                      border: Border.all(width: 5, color: Colors.white)),
                 ),
                 const Spacer(),
               ],
@@ -273,13 +270,15 @@ class OnBoard extends StatelessWidget {
                           ],
                         ),
                       ),
-                      SizedBox(width: 20),
+                      const SizedBox(width: 20),
                     
                      //Spacer(),
                     Flexible(
                       child: FractionallySizedBox(
                         widthFactor: 1,
                         child: Container(
+                          decoration: BoxDecoration(
+                              border: Border.all(width: 5, color: Colors.white)),
                           child: /*secondImage != null
                               ? Column(
                                   children: [
@@ -288,8 +287,6 @@ class OnBoard extends StatelessWidget {
                                   ],
                                 )
                               : */Image.asset(image,),
-                          decoration: BoxDecoration(
-                              border: Border.all(width: 5, color: Colors.white)),
                         ),
                       ),
                     ),

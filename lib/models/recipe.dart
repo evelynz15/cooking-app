@@ -1,7 +1,6 @@
 import 'package:cookingapp/services/db_helper.dart';
 import 'package:cookingapp/models/ingredient.dart';
 import 'package:cookingapp/models/step.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:convert';
 import 'dart:io';

@@ -1,8 +1,6 @@
 import 'dart:io';
 import 'dart:core';
 import 'package:flutter/material.dart';
-import 'package:cookingapp/ui/views/home_view.dart';
-import 'package:cookingapp/ui/views/catagory_view.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -10,7 +8,6 @@ import 'package:cookingapp/models/recipe.dart';
 import 'package:cookingapp/models/ingredient.dart';
 import 'package:cookingapp/models/step.dart';
 import 'dart:developer';
-import 'package:cookingapp/ui/router.dart';
 
 enum ImageSourceType { gallery, camera }
 
@@ -84,7 +81,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text("DESSERT"),
+        title: const Text("DESSERT"),
       ),
       body: SingleChildScrollView(
         child: Padding(
@@ -95,13 +92,13 @@ class _NewRecipePageState extends State<NewRecipePage> {
               child: Column(
                 children: [
                   _buildFormField("Title of Recipe", _recipeController),
-                  SizedBox(height: 50),
+                  const SizedBox(height: 50),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Column(
                         children: [
-                          Container(
+                          SizedBox(
                             height: 160,
                             width: 160,
                             child: _image != null
@@ -163,7 +160,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                           ),
                         ],
                       ),
-                      Container(
+                      SizedBox(
                         width: 150,
                         child: Column(
                           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -177,7 +174,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                         "Time", _timeController2)),
                                 DropdownButton<String>(
                                   value: selectedTime,
-                                  hint: Text('Unit'),
+                                  hint: const Text('Unit'),
                                   onChanged: (String? newValue) {
                                     setState(() {
                                       selectedTime = newValue ?? '';
@@ -194,7 +191,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                 ),
                               ],
                             ),
-                            SizedBox(height: 30),
+                            const SizedBox(height: 30),
                             SizedBox(
                               width: 120,
                               height: 40,
@@ -205,7 +202,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                       builder: (BuildContext context) {
                                         return AlertDialog(
                                           scrollable: true,
-                                          title: Text('Notes'),
+                                          title: const Text('Notes'),
                                           content: Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Form(
@@ -219,7 +216,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                                       expands: true, // and this
                                                       keyboardType:
                                                           TextInputType.multiline,
-                                                      decoration: InputDecoration(
+                                                      decoration: const InputDecoration(
                                                         hintText:
                                                             'Enter your notes',
                                                         border:
@@ -233,7 +230,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                           ),
                                           actions: [
                                             ElevatedButton(
-                                                child: Text("Done"),
+                                                child: const Text("Done"),
                                                 onPressed: () {
                                                   Navigator.of(context).pop();
                                                 })
@@ -304,7 +301,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                             ),
                                           ));*/
                                 },
-                                child: Text("Add Notes"),
+                                child: const Text("Add Notes"),
                               ),
                             ),
                           ],
@@ -312,19 +309,19 @@ class _NewRecipePageState extends State<NewRecipePage> {
                       ),
                     ],
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   Container(
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Text("Ingredients List:"),
-                          SizedBox(width: 25),
-                          Container(
+                          const Text("Ingredients List:"),
+                          const SizedBox(width: 25),
+                          SizedBox(
                             width: 70,
                             height: 30,
                             child: FloatingActionButton(
                               onPressed: addNewIngredient,
-                              child: Icon(Icons.add),
+                              child: const Icon(Icons.add),
                             ),
                           ),
                         ],
@@ -332,7 +329,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                   SizedBox(
                     height: 100,
                     child: ListView.builder(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       itemCount: _ingredients.length,
                       itemBuilder: (BuildContext context, int index) {
                         return Row(
@@ -356,7 +353,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                                   width: 70,
                                   child: DropdownButton<String>(
                                     value: selectedUnit[index],
-                                    hint: Text('Unit'),
+                                    hint: const Text('Unit'),
                                     onChanged: (String? newValue) {
                                       setState(() {
                                         selectedUnit[index] = newValue ?? '';
@@ -378,19 +375,19 @@ class _NewRecipePageState extends State<NewRecipePage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 50),
+                  const SizedBox(height: 50),
                   Container(
                       alignment: Alignment.centerLeft,
                       child: Row(
                         children: [
-                          Text("Procedure:"),
-                          SizedBox(width: 25),
-                          Container(
+                          const Text("Procedure:"),
+                          const SizedBox(width: 25),
+                          SizedBox(
                             width: 70,
                             height: 30,
                             child: FloatingActionButton(
                               onPressed: addNewStep,
-                              child: Icon(Icons.add),
+                              child: const Icon(Icons.add),
                             ),
                           ),
                         ],
@@ -399,7 +396,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                     //width: 200,
                     height: 100,
                     child: ListView.builder(
-                      padding: EdgeInsets.all(16.0),
+                      padding: const EdgeInsets.all(16.0),
                       itemCount: _steps.length,
                       itemBuilder: (BuildContext context, int index) {
                         return _buildFormField(
@@ -407,7 +404,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                       },
                     ),
                   ),
-                  SizedBox(height: 20),
+                  const SizedBox(height: 20),
                   SizedBox(
                     height: 40,
                     width: 100,
@@ -495,7 +492,7 @@ class _NewRecipePageState extends State<NewRecipePage> {
                           });
                         }
                       },
-                      child: Text("Done"),
+                      child: const Text("Done"),
                     ),
                   ),
                 ],

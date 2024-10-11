@@ -1,7 +1,5 @@
-import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cookingapp/ui/views/recipe_stepper/custom_input.dart';
-import 'package:cookingapp/ui/views/recipe_stepper/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -11,7 +9,6 @@ import 'dart:developer';
 import 'package:cookingapp/models/recipe.dart';
 import 'package:cookingapp/models/ingredient.dart';
 import 'package:cookingapp/models/step.dart';
-import 'package:cookingapp/ui/router.dart';
 import 'package:image_cropper/image_cropper.dart';
 
 enum ImageSourceType { gallery, camera }
@@ -27,7 +24,7 @@ class EditFormPage extends StatefulWidget {
 }
 
 class _EditFormPageState extends State<EditFormPage> {
-  List<GlobalKey<FormState>> _formKeys = [
+  final List<GlobalKey<FormState>> _formKeys = [
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
@@ -190,13 +187,13 @@ class _EditFormPageState extends State<EditFormPage> {
                         children: [
                           CustomInput(
                             hint: "Title of Recipe",
-                            inputBorder: UnderlineInputBorder(),
+                            inputBorder: const UnderlineInputBorder(),
                             controller: _recipeController!,
                             maxLength: 40,
                           ),
                           CustomInput(
                             hint: "Yield",
-                            inputBorder: UnderlineInputBorder(),
+                            inputBorder: const UnderlineInputBorder(),
                             controller: _yieldController!,
                             maxLength: 30,
                           ),
@@ -206,7 +203,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                 width: 70,
                                 child: CustomInput(
                                   hint: "Time",
-                                  inputBorder: UnderlineInputBorder(),
+                                  inputBorder: const UnderlineInputBorder(),
                                   controller: _timeController!,
                                   maxLength: 4,
                                   mustBeNumber: true,
@@ -214,7 +211,7 @@ class _EditFormPageState extends State<EditFormPage> {
                               ),
                               DropdownButton<String>(
                                 value: selectedTime,
-                                hint: Text('Unit'),
+                                hint: const Text('Unit'),
                                 onChanged: (String? newValue) {
                                   setState(() {
                                     selectedTime = newValue ?? '';
@@ -224,7 +221,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                     (String value) {
                                   return DropdownMenuItem<String>(
                                     value: value,
-                                    child: Text(value, style: TextStyle(fontSize: 12)),
+                                    child: Text(value, style: const TextStyle(fontSize: 12)),
                                   );
                                 }).toList(),
                               ),
@@ -242,7 +239,7 @@ class _EditFormPageState extends State<EditFormPage> {
                   title: const Text("Image"),
                   content: Column(
                     children: [
-                      Container(
+                      SizedBox(
                         height: 160,
                         //width: 160,
                         child: _image != null
@@ -314,7 +311,7 @@ class _EditFormPageState extends State<EditFormPage> {
                   state:
                       currentStep > 2 ? StepState.complete : StepState.indexed,
                   isActive: currentStep >= 2,
-                  title: Text("Ingredients"),
+                  title: const Text("Ingredients"),
                   content: Form(
                     key: _formKeys[2],
                     child: Column(
@@ -322,8 +319,8 @@ class _EditFormPageState extends State<EditFormPage> {
                         SizedBox(
                           child: ListView(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.all(16.0),
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(16.0),
                               children: List.generate(
                                 listOfIngredientControllers.length,
                                 (index) {
@@ -341,7 +338,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                               child: CustomInput(
                                                 hint: "${index + 1}",
                                                 inputBorder:
-                                                    UnderlineInputBorder(),
+                                                    const UnderlineInputBorder(),
                                                 controller:
                                                     listOfIngredientControllers[
                                                         index],
@@ -358,7 +355,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                                     child: CustomInput(
                                                       hint: "Amount",
                                                       inputBorder:
-                                                          UnderlineInputBorder(),
+                                                          const UnderlineInputBorder(),
                                                       controller:
                                                           listOfUnitControllers[
                                                               index],
@@ -374,7 +371,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                                         selectedIngredientList![
                                                                 index]
                                                             .unit,
-                                                    hint: Text('Unit'),
+                                                    hint: const Text('Unit'),
                                                     onChanged:
                                                         (String? newValue) {
                                                       setState(() {
@@ -391,7 +388,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                                       return DropdownMenuItem<
                                                           String>(
                                                         value: value,
-                                                        child: Text(value, style: TextStyle(fontSize: 12)),
+                                                        child: Text(value, style: const TextStyle(fontSize: 12)),
                                                       );
                                                     }).toList(),
                                                   ),
@@ -408,7 +405,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                             onPressed: () {
                                               deleteIngredient(index);
                                             },
-                                            child: FittedBox(
+                                            child: const FittedBox(
                                               fit: BoxFit.contain,
                                               child: Text("Delete",
                                                   style: TextStyle(fontSize: 11)),
@@ -419,7 +416,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                 },
                               )),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
                         SizedBox(
@@ -427,7 +424,7 @@ class _EditFormPageState extends State<EditFormPage> {
                           height: 30,
                           child: FloatingActionButton(
                             onPressed: addNewIngredient,
-                            child: Icon(Icons.add),
+                            child: const Icon(Icons.add),
                           ),
                         ),
                       ],
@@ -446,8 +443,8 @@ class _EditFormPageState extends State<EditFormPage> {
                         SizedBox(
                           child: ListView(
                               shrinkWrap: true,
-                              physics: NeverScrollableScrollPhysics(),
-                              padding: EdgeInsets.all(16.0),
+                              physics: const NeverScrollableScrollPhysics(),
+                              padding: const EdgeInsets.all(16.0),
                               children: List.generate(
                                 listOfStepControllers.length,
                                 (int index) {
@@ -455,7 +452,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                     children: [
                                       CustomInput(
                                         hint: "${index + 1}",
-                                        inputBorder: UnderlineInputBorder(),
+                                        inputBorder: const UnderlineInputBorder(),
                                         controller: listOfStepControllers[index],
                                         maxLength: 300,
                                       ),
@@ -466,7 +463,7 @@ class _EditFormPageState extends State<EditFormPage> {
                                             onPressed: () {
                                               deleteStep(index);
                                             },
-                                            child: FittedBox(
+                                            child: const FittedBox(
                                               fit: BoxFit.contain,
                                               child: Text("Delete",
                                                   style: TextStyle(fontSize: 11)),
@@ -477,15 +474,15 @@ class _EditFormPageState extends State<EditFormPage> {
                                 },
                               )),
                         ),
-                        SizedBox(
+                        const SizedBox(
                           height: 20,
                         ),
-                        Container(
+                        SizedBox(
                           width: 70,
                           height: 30,
                           child: FloatingActionButton(
                             onPressed: addNewStep,
-                            child: Icon(Icons.add),
+                            child: const Icon(Icons.add),
                           ),
                         ),
                       ],
@@ -503,7 +500,7 @@ class _EditFormPageState extends State<EditFormPage> {
                       children: [
                         CustomInput(
                           hint: "Notes",
-                          inputBorder: OutlineInputBorder(),
+                          inputBorder: const OutlineInputBorder(),
                           controller: _notesController,
                           maxLength: 400,
                         ),
@@ -523,24 +520,24 @@ class _EditFormPageState extends State<EditFormPage> {
                     padding: const EdgeInsets.all(0),
                     height: orientation == Orientation.portrait ? null : 400,
                     child: Stepper(
-                      physics: ClampingScrollPhysics(),
+                      physics: const ClampingScrollPhysics(),
                       type: orientation == Orientation.portrait
                     ? StepperType.vertical
                     : StepperType.horizontal,
                       currentStep: currentStep,
-                      margin: EdgeInsets.symmetric(horizontal: 30),
+                      margin: const EdgeInsets.symmetric(horizontal: 30),
                       controlsBuilder:
                           (BuildContext context, ControlsDetails details) {
                         return Row(
                           children: <Widget>[
                             FilledButton(
                               onPressed: details.onStepContinue,
-                              child: currentStep == 4 ? Text('Save') : Text('Next'),
+                              child: currentStep == 4 ? const Text('Save') : const Text('Next'),
                             ),
-                            SizedBox(width: 50),
+                            const SizedBox(width: 50),
                             FilledButton.tonal(
                               onPressed: details.onStepCancel,
-                              child: currentStep == 0 ? Text('Cancel') : Text('Back'),
+                              child: currentStep == 0 ? const Text('Cancel') : const Text('Back'),
                             ),
                           ],
                         );

@@ -1,7 +1,5 @@
-import 'package:cookingapp/ui/views/home_view.dart';
 import 'package:flutter/material.dart';
 import 'package:cookingapp/ui/views/recipe_stepper/custom_input.dart';
-import 'package:cookingapp/ui/views/recipe_stepper/custom_button.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart' as path;
@@ -23,7 +21,7 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
-  List<GlobalKey<FormState>> _formKeys = [
+  final List<GlobalKey<FormState>> _formKeys = [
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
     GlobalKey<FormState>(),
@@ -125,19 +123,19 @@ class _FormPageState extends State<FormPage> {
                     ? StepperType.vertical
                     : StepperType.horizontal,
                 currentStep: currentStep,
-                margin: EdgeInsets.symmetric(horizontal: 30),
+                margin: const EdgeInsets.symmetric(horizontal: 30),
                 controlsBuilder:
                     (BuildContext context, ControlsDetails details) {
                   return Row(
                     children: <Widget>[
                       FilledButton(
                         onPressed: details.onStepContinue,
-                        child: currentStep == 4 ? Text('Save') : Text('Next'),
+                        child: currentStep == 4 ? const Text('Save') : const Text('Next'),
                       ),
-                      SizedBox(width: 50),
+                      const SizedBox(width: 50),
                       FilledButton.tonal(
                         onPressed: details.onStepCancel,
-                        child: currentStep == 0 ? Text('Cancel') : Text('Back'),
+                        child: currentStep == 0 ? const Text('Cancel') : const Text('Back'),
                       ),
                     ],
                   );
@@ -293,13 +291,13 @@ class _FormPageState extends State<FormPage> {
               children: [
                 CustomInput(
                   hint: "Title of Recipe",
-                  inputBorder: UnderlineInputBorder(),
+                  inputBorder: const UnderlineInputBorder(),
                   controller: _recipeController,
                   maxLength: 40,
                 ),
                 CustomInput(
                   hint: "Yield",
-                  inputBorder: UnderlineInputBorder(),
+                  inputBorder: const UnderlineInputBorder(),
                   controller: _yieldController,
                   maxLength: 30,
                 ),
@@ -309,7 +307,7 @@ class _FormPageState extends State<FormPage> {
                       width: 70,
                       child: CustomInput(
                         hint: "Time",
-                        inputBorder: UnderlineInputBorder(),
+                        inputBorder: const UnderlineInputBorder(),
                         controller: _timeController,
                         mustBeNumber: true,
                         maxLength: 4,
@@ -317,7 +315,7 @@ class _FormPageState extends State<FormPage> {
                     ),
                     DropdownButton<String>(
                       value: selectedTime,
-                      hint: Text('Unit'),
+                      hint: const Text('Unit'),
                       onChanged: (String? newValue) {
                         setState(() {
                           selectedTime = newValue ?? '';
@@ -327,7 +325,7 @@ class _FormPageState extends State<FormPage> {
                           .map<DropdownMenuItem<String>>((String value) {
                         return DropdownMenuItem<String>(
                           value: value,
-                          child: Text(value, style: TextStyle(fontSize: 12)),
+                          child: Text(value, style: const TextStyle(fontSize: 12)),
                         );
                       }).toList(),
                     ),
@@ -344,7 +342,7 @@ class _FormPageState extends State<FormPage> {
         title: const Text("Image"),
         content: Column(
           children: [
-            Container(
+            SizedBox(
               height: 160,
               //width: 160,
               child: _image != null
@@ -413,7 +411,7 @@ class _FormPageState extends State<FormPage> {
       Step(
         state: currentStep > 2 ? StepState.complete : StepState.indexed,
         isActive: currentStep >= 2,
-        title: Text("Ingredients"),
+        title: const Text("Ingredients"),
         content: Form(
           key: _formKeys[2],
           child: Column(
@@ -422,8 +420,8 @@ class _FormPageState extends State<FormPage> {
                 //height: 150,
                 child: ListView(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(16.0),
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16.0),
                     children: List.generate(
                       listOfIngredientControllers.length,
                       (index) {
@@ -438,7 +436,7 @@ class _FormPageState extends State<FormPage> {
                                       widthFactor: 0.9,
                                       child: CustomInput(
                                         hint: "${index + 1}",
-                                        inputBorder: UnderlineInputBorder(),
+                                        inputBorder: const UnderlineInputBorder(),
                                         controller:
                                             listOfIngredientControllers[index],
                                         maxLength: 40,
@@ -452,7 +450,7 @@ class _FormPageState extends State<FormPage> {
                                         width: 65,
                                         child: CustomInput(
                                           hint: "Amount",
-                                          inputBorder: UnderlineInputBorder(),
+                                          inputBorder: const UnderlineInputBorder(),
                                           controller:
                                               listOfUnitControllers[index],
                                           mustBeNumber: true,
@@ -461,7 +459,7 @@ class _FormPageState extends State<FormPage> {
                                       ),
                                       DropdownButton<String>(
                                         value: selectedUnit[index],
-                                        hint: Text('Unit'),
+                                        hint: const Text('Unit'),
                                         onChanged: (String? newValue) {
                                           setState(() {
                                             selectedUnit[index] =
@@ -475,7 +473,7 @@ class _FormPageState extends State<FormPage> {
                                             value: value,
                                             child: Text(
                                               value,
-                                              style: TextStyle(fontSize: 12),
+                                              style: const TextStyle(fontSize: 12),
                                             ),
                                           );
                                         }).toList(),
@@ -493,7 +491,7 @@ class _FormPageState extends State<FormPage> {
                                   onPressed: () {
                                     deleteIngredient(index);
                                   },
-                                  child: FittedBox(
+                                  child: const FittedBox(
                                     fit: BoxFit.contain,
                                     child: Text("Delete",
                                         style: TextStyle(fontSize: 11)),
@@ -504,7 +502,7 @@ class _FormPageState extends State<FormPage> {
                       },
                     )),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
               SizedBox(
@@ -512,10 +510,10 @@ class _FormPageState extends State<FormPage> {
                 height: 30,
                 child: FloatingActionButton(
                   onPressed: addNewIngredient,
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
             ],
@@ -534,8 +532,8 @@ class _FormPageState extends State<FormPage> {
                 //height: 150,
                 child: ListView(
                     shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    padding: EdgeInsets.all(16.0),
+                    physics: const NeverScrollableScrollPhysics(),
+                    padding: const EdgeInsets.all(16.0),
                     children: List.generate(
                       listOfStepControllers.length,
                       (index) {
@@ -545,7 +543,7 @@ class _FormPageState extends State<FormPage> {
                               widthFactor: 1,
                               child: CustomInput(
                                 hint: "${index + 1}",
-                                inputBorder: UnderlineInputBorder(),
+                                inputBorder: const UnderlineInputBorder(),
                                 controller: listOfStepControllers[index],
                                 maxLength: 300,
                               ),
@@ -557,7 +555,7 @@ class _FormPageState extends State<FormPage> {
                                   onPressed: () {
                                     deleteStep(index);
                                   },
-                                  child: FittedBox(
+                                  child: const FittedBox(
                                     fit: BoxFit.contain,
                                     child: Text("Delete",
                                         style: TextStyle(fontSize: 11)),
@@ -568,18 +566,18 @@ class _FormPageState extends State<FormPage> {
                       },
                     )),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
-              Container(
+              SizedBox(
                 width: 70,
                 height: 30,
                 child: FloatingActionButton(
                   onPressed: addNewStep,
-                  child: Icon(Icons.add),
+                  child: const Icon(Icons.add),
                 ),
               ),
-              SizedBox(
+              const SizedBox(
                 height: 10,
               ),
             ],
@@ -597,7 +595,7 @@ class _FormPageState extends State<FormPage> {
               children: [
                 CustomInput(
                   hint: "Notes",
-                  inputBorder: OutlineInputBorder(),
+                  inputBorder: const OutlineInputBorder(),
                   controller: _notesController,
                   maxLength: 400,
                 ),

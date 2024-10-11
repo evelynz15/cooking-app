@@ -1,10 +1,5 @@
 import 'package:cookingapp/ui/router.dart';
-import 'package:cookingapp/ui/views/add_recipe_view.dart';
-import 'package:cookingapp/ui/views/edit_recipe_view.dart';
-import 'package:cookingapp/ui/views/finished_recipe_view.dart';
 import 'package:flutter/material.dart';
-import 'package:cookingapp/ui/views/home_view.dart';
-import 'package:cookingapp/ui/views/catagory_view.dart';
 import 'package:cookingapp/services/db_helper.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +28,7 @@ class MyApp extends StatelessWidget {
 
   final String defaultRoute;
 
-  MyApp({super.key, required this.defaultRoute});
+  const MyApp({super.key, required this.defaultRoute});
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +37,7 @@ class MyApp extends StatelessWidget {
       title: "What's Cooking?",
       theme: ThemeData(
         colorScheme:
-            ColorScheme.fromSeed(seedColor: Color.fromRGBO(103, 58, 183, 1)),
+            ColorScheme.fromSeed(seedColor: const Color.fromRGBO(103, 58, 183, 1)),
         useMaterial3: true,
       ),
       initialRoute: defaultRoute,

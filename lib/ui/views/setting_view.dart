@@ -1,6 +1,5 @@
 import 'package:cookingapp/services/db_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:file_picker/file_picker.dart';
 import 'dart:io';
@@ -69,7 +68,7 @@ class _SettingViewState extends State<SettingView> {
       showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(content: Text("Data reset"));
+            return const AlertDialog(content: Text("Data reset"));
           });
     }
   }
@@ -81,7 +80,7 @@ class _SettingViewState extends State<SettingView> {
       showDialog(
           context: context,
           builder: (BuildContext context) {
-            return AlertDialog(content: Text("Data restored"));
+            return const AlertDialog(content: Text("Data restored"));
           });
     }).onError((error, stackTrace) {
       Navigator.of(context).pop();
@@ -156,16 +155,16 @@ class _SettingViewState extends State<SettingView> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             scrollable: true,
-                            title: Text('Backup to Email', style: TextStyle(fontSize: 16)),
+                            title: const Text('Backup to Email', style: TextStyle(fontSize: 16)),
                             content: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
+                              child: const Padding(
+                                padding: EdgeInsets.all(12.0),
                                 child: Form(
                                   child: Column(
                                     children: <Widget>[
                                       Align(
                                         alignment: Alignment.topLeft,
-                                        child: Container(
+                                        child: SizedBox(
                                             height: 100,
                                             child: Text(
                                               "The Mail app will be launched with a backup of your app data file attached to a new message. "
@@ -184,12 +183,12 @@ class _SettingViewState extends State<SettingView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   ElevatedButton(
-                                      child: Text("Cancel"),
+                                      child: const Text("Cancel"),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       }),
                                   ElevatedButton(
-                                      child: Text("Backup"),
+                                      child: const Text("Backup"),
                                       onPressed: () {
                                         setState(() {
                                           onContinuePressed();
@@ -215,16 +214,16 @@ class _SettingViewState extends State<SettingView> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               scrollable: true,
-                              title: Text('Restore Data', style: TextStyle(fontSize: 16)),
+                              title: const Text('Restore Data', style: TextStyle(fontSize: 16)),
                               content: Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(12.0),
                                   child: Form(
                                     child: Column(
                                       children: <Widget>[
                                         Align(
                                           alignment: Alignment.topLeft,
-                                          child: Container(
+                                          child: SizedBox(
                                               height: 100,
                                               child: Text(
                                                 "All data (like recipe information) you have entered"
@@ -244,12 +243,12 @@ class _SettingViewState extends State<SettingView> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     ElevatedButton(
-                                        child: Text("Cancel"),
+                                        child: const Text("Cancel"),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         }),
                                     ElevatedButton(
-                                        child: Text("Restore"),
+                                        child: const Text("Restore"),
                                         onPressed: () {
                                           setState(() {
                                             onContinueDataRestorePressed(
@@ -297,16 +296,16 @@ class _SettingViewState extends State<SettingView> {
                           builder: (BuildContext context) {
                             return AlertDialog(
                               scrollable: true,
-                              title: Text('Import Recipe', style: TextStyle(fontSize: 16)),
+                              title: const Text('Import Recipe', style: TextStyle(fontSize: 16)),
                               content: Container(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(12.0),
+                                child: const Padding(
+                                  padding: EdgeInsets.all(12.0),
                                   child: Form(
                                     child: Column(
                                       children: <Widget>[
                                         Align(
                                           alignment: Alignment.topLeft,
-                                          child: Container(
+                                          child: SizedBox(
                                               height: 100,
                                                 child: Text(
                                                   "Recipe data in this file will be imported into its original catagory."
@@ -326,12 +325,12 @@ class _SettingViewState extends State<SettingView> {
                                       MainAxisAlignment.spaceBetween,
                                   children: [
                                     ElevatedButton(
-                                        child: Text("Cancel"),
+                                        child: const Text("Cancel"),
                                         onPressed: () {
                                           Navigator.of(context).pop();
                                         }),
                                     ElevatedButton(
-                                        child: Text("Restore"),
+                                        child: const Text("Restore"),
                                         onPressed: () async {
                                           int catagoryId = await onImportRecipePressed(result);
                                           setState(() {
@@ -364,16 +363,16 @@ class _SettingViewState extends State<SettingView> {
                         builder: (BuildContext context) {
                           return AlertDialog(
                             scrollable: true,
-                            title: Text('Data Reset', style: TextStyle(fontSize: 16)),
+                            title: const Text('Data Reset', style: TextStyle(fontSize: 16)),
                             content: Container(
-                              child: Padding(
-                                padding: const EdgeInsets.all(12.0),
+                              child: const Padding(
+                                padding: EdgeInsets.all(12.0),
                                 child: Form(
                                   child: Column(
                                     children: <Widget>[
                                       Align(
                                         alignment: Alignment.topLeft,
-                                        child: Container(
+                                        child: SizedBox(
                                             height: 100,
                                             child: Text(
                                                 "All the data you have entered or collected in this app will be deleted, and the app will be restored to initial setup. Are you sure you want to reset the data to its initial setup?",
@@ -391,12 +390,12 @@ class _SettingViewState extends State<SettingView> {
                                     MainAxisAlignment.spaceBetween,
                                 children: [
                                   ElevatedButton(
-                                      child: Text("Cancel"),
+                                      child: const Text("Cancel"),
                                       onPressed: () {
                                         Navigator.of(context).pop();
                                       }),
                                   ElevatedButton(
-                                      child: Text("Reset"),
+                                      child: const Text("Reset"),
                                       onPressed: () {
                                         setState(() {
                                           onDeleteButtonPressed();
@@ -420,9 +419,9 @@ class _SettingViewState extends State<SettingView> {
     return Scaffold(
       appBar: AppBar(
           backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-          title: Text("Settings"),
+          title: const Text("Settings"),
           leading: IconButton(
-            icon: Icon(Icons.home),
+            icon: const Icon(Icons.home),
             onPressed: () {
               Navigator.pushNamed(context, "home");
             },

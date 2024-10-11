@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class CustomBtn extends StatelessWidget {
   final Function? callback;
   final Widget? title;
-  CustomBtn({Key? key, this.title, this.callback}) : super(key: key);
+  const CustomBtn({super.key, this.title, this.callback});
 
   @override
   Widget build(BuildContext context) {
